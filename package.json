@@ -1,11 +1,15 @@
 {
-  "name": "307-frontend",
+  "name": "app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "react": "^16.6.0",
-    "react-dom": "^16.6.0",
+    "axios": "^0.18.0",
+    "bootstrap": "^4.1.3",
+    "react": "^16.6.1",
+    "react-dom": "^16.6.1",
     "react-redux": "^5.1.0",
+    "react-router": "^4.3.1",
+    "react-router-dom": "^4.3.1",
     "react-scripts": "2.1.1",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"
