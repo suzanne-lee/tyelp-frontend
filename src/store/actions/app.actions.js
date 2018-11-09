@@ -12,7 +12,7 @@ export const SET_TOKEN_ACTION = (tk) => {
 
 export const SET_TOKEN_ACTION_SUCCESS = (tk) => {
     return {
-        type: SET_TOKEN,
+        type: SET_TOKEN_SUCCESS,
         payload: {
             token: tk
         }

@@ -6,13 +6,13 @@ const initialState = {
 }
 
 const appReducer = (state = initialState, action) => {
-
+    
     switch (action.type) 
     {
-        case actions.SET_TOKEN_ACTION_SUCCESS:
+        case actions.SET_TOKEN_SUCCESS:
             return {
-                token: action.payload.token,
-                ...state
+                ...state,
+                token: action.payload.token
             }
         default:
             return state;       
