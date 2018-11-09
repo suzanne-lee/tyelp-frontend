@@ -3,6 +3,6 @@
 To run development
 
 ```
-./npm install
-./npm start
+npm install
+npm start
 ```
