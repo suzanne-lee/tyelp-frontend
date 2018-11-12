@@ -1,42 +1,62 @@
 import React, { Component } from 'react';
-// import { connect } from 'react-redux';
 import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom';
-import Home from './components/home';
 import Login from './components/login';
-// import UI from './components/ui';
+import Home from './components/home';
 import Stories from './components/stories';
-import Error from './components/error';
+import Accepted from './components/accepted';
+import Unaccepted from './components/unaccepted';
+import Store from './store/store';
 import async from './hoc/async';
-// import * as actions from './store/actions/app.actions';
 import './App.css';
 
 const AsyncUI = async(
-  () => {
-    return import('./components/ui');
-  }
+	() => {
+		return import('./components/main_ui');
+	}
 );
 
 class App extends Component {
 
-  state = {
-    authenticated: false,
-    token: null
-  }
+	constructor(props) 
+	{
+		super(props);
+		this.state = {
+			user: null,
+			authenticated: true,
+			token: null,
+			restaurants: []
+		}
+	}
+	
+	componentDidMount()
+	{	
+		/*
+		Store.subscribe(
+			() => {
+				this.setState({
+					...state,
+					authenticated: Store.getState().app.authenticated
+				});
+			}
+		);
+		*/
+	}
 
-  render() {
-    return (
-      <BrowserRouter /* basename=''*/>
-        <Switch>
-          <Route path='/' exact component={ Home } /> 
-          <Route path='/login' component={ Login } />
-          <Route path='/stories' component={ Stories } />
-          { this.state.authenticated?  <Route path='/ui' component={ AsyncUI } /> : null }
-          <Route path='/error' component={ Error } />
-          <Redirect from='/' to='/login'/>
-        </Switch>
-      </BrowserRouter>
-    );
-  }
+	render() {
+		return (
+		<BrowserRouter /* basename=''*/>
+			<Switch>
+				<Route path='/login' exact component={ Login } />
+				{ this.state.authenticated? <Route path='/home' component={ Home } /> : null }
+				{ this.state.authenticated? <Route path='/ui' component={ AsyncUI } /> : null }
+				{ this.state.authenticated? <Route path='/stories' component={ Stories } /> : null }
+				<Route path='/accepted' component={ Accepted } />
+				<Route path='/unaccepted' component={ Unaccepted } />
+				<Redirect from='/' to='/unaccepted'/>
+			</Switch>
+		</BrowserRouter>
+		);
+	}
 }
 
 export default App;
