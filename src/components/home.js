@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Store from '../store/store';
-import * as actions from '../store/actions/home.actions';
+import * as actions from '../store/actions/app.actions';
 //import Button from '@material-ui/core/Button';
 import '../styles/home.css';
 
