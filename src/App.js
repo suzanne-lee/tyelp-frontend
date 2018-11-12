@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom';
 import Login from './components/login';
-import Home from './components/home';
+import Query from './components/query';
 import Stories from './components/stories';
 import Accepted from './components/accepted';
 import Unaccepted from './components/unaccepted';
@@ -47,7 +47,7 @@ class App extends Component {
 		<BrowserRouter /* basename=''*/>
 			<Switch>
 				<Route path='/login' exact component={ Login } />
-				{ this.state.authenticated? <Route path='/home' component={ Home } /> : null }
+				{ this.state.authenticated? <Route path='/query' component={ Query } /> : null }
 				{ this.state.authenticated? <Route path='/ui' component={ AsyncUI } /> : null }
 				{ this.state.authenticated? <Route path='/stories' component={ Stories } /> : null }
 				<Route path='/accepted' component={ Accepted } />
