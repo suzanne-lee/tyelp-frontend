@@ -1,10 +1,32 @@
 import React, { Component } from 'react';
+import '../styles/unaccepted.css';
 
 class Unaccepted extends Component {
+
+    constructor(props)
+    {
+        super(props);
+        this.leave = this.leave.bind(this);
+    }
+
+    leave()
+    {
+        this.props.history.push({ pathname: '/login' });
+    }
+
     render() {
         return (
-            <div>
-                404 Not Found
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="unaccepted-ctn">
+                        <label>
+                            OOPS! :(
+                        </label>
+                        <button type="button" class="btn btn-dark btn-lg" onClick={ this.leave }>
+                            LEAVE
+                        </button>
+                    </div>   
+                </div>
             </div>
         );
     }
