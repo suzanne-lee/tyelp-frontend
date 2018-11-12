@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 
 class Stories extends Component {
-  render() {
-    return (
-        <div>
-          Stories Page
-        </div>
-    );
-  }
+
+	constructor(props) 
+	{
+		super(props);
+	}
+
+	render() {
+		return (
+			<div>
+				Stories Page
+			</div>
+		);
+	}
 }
 
 export default Stories;
