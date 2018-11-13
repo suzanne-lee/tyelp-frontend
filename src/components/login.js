@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom';
 // import '../styles/login.css';
 // import * as actions from '../store/actions/app.actions';
@@ -21,19 +21,9 @@ class Login extends Component {
 
     }
 
-
-
     login() {
         if(this.state.username && this.state.password){
-            
-            /*PostData('login',this.state).then((result) => {
-                let responseJson = result;
-                if(responseJson.userData){
-                    sessionStorage.setItem('userData',JSON.stringify(responseJson));
-                    this.setState({redirectToReferrer: true});
-                }
-
-            });*/
+            // Check against backend values somehow
         }
 
     }
@@ -47,11 +37,7 @@ class Login extends Component {
 
     render() {
 
-        if (this.state.redirectToReferrer) {
-            return (<Redirect to={'/home'}/>)
-        }
-
-        if(sessionStorage.getItem('userData')){
+        if (this.state.redirectToReferrer /* || sessionStorage.getItem('userData')*/) {
             return (<Redirect to={'/home'}/>)
         }
 
@@ -64,7 +50,7 @@ class Login extends Component {
                     <label>Password</label>
                     <input type="password" name="password"  placeholder="Password" onChange={this.onChange}/>
                     <input type="submit" className="button success" value="Login" onClick={this.login}/>
-                    <a href="/signup">Registration</a>
+                    <a href="/register">Registration</a>
                 </div>
             </div>
         );

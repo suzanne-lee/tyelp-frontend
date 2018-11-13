@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom';
 import Login from './components/login';
+import Register from './components/register';
 import Query from './components/query';
 import Stories from './components/stories';
 import Accepted from './components/accepted';
@@ -47,6 +48,7 @@ class App extends Component {
 		<BrowserRouter /* basename=''*/>
 			<Switch>
 				<Route path='/login' exact component={ Login } />
+				<Route path='/register' exact component={ Register } />
 				{ this.state.authenticated? <Route path='/query' component={ Query } /> : null }
 				{ this.state.authenticated? <Route path='/ui' component={ AsyncUI } /> : null }
 				{ this.state.authenticated? <Route path='/stories' component={ Stories } /> : null }
