@@ -34,7 +34,7 @@ export const SET_TOKEN_ACTION_SUCCESS = (token) => {
     }
 };
 
-export const LOGIN_ACTION = (username,password) => {
+export const LOGIN_ACTION = (username, password) => {
 
     let user = null;
     // asynchronous call using axios instance
@@ -53,10 +53,34 @@ export const LOGIN_SUCCESS_ACTION = (user) => {
     }
 }
 
-export const GET_RESTAURANTS_ACTION = (distance) => {
+export const GET_RESTAURANTS_ACTION = (latitude, longitude, distance) => {
     
     let list = ['Error'];
+    /*
+    const google = window.google;
+    const pyrmont = new google.maps.LatLng(latitude, longitude);
 
+    const map = new google.maps.Map(document.getElementById('map'), {
+        center: pyrmont,
+        zoom: 15
+    });
+
+    const request = {
+        location: pyrmont,
+        radius: distance,
+        type: ['restaurant']
+    };
+
+    const service = new google.maps.places.PlacesService(map);
+    service.nearbySearch(request, (res,status) => {
+        list = res;
+    });
+
+    console.log(list);
+    */
+
+
+    /*
     google_api.get()
         .then(
             (res) => {
@@ -73,7 +97,7 @@ export const GET_RESTAURANTS_ACTION = (distance) => {
                 console.log(err);
             }
         );  
-    
+    */
 
     return (dispatch) => { 
         dispatch(GET_RESTAURANTS_ACTION_SUCCESS(list));
