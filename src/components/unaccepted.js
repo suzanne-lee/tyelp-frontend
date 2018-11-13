@@ -22,7 +22,7 @@ class Unaccepted extends Component {
                         <label>
                             OOPS! :(
                         </label>
-                        <button type="button" class="btn btn-dark btn-lg" onClick={ this.leave }>
+                        <button type="button" className="btn btn-dark btn-lg" onClick={ this.leave }>
                             LEAVE
                         </button>
                     </div>   
