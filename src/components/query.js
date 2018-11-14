@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import Store from '../store/store';
-import * as actions from '../store/actions/app.actions';
+//import Store from '../store/store';
+//import * as actions from '../store/actions/app.actions';
+import Map from './map';
+import Restaurant from './restaurant';
 import '../styles/query.css';
-
-const google = window.google;
 
 class Query extends Component {
 
@@ -13,11 +13,29 @@ class Query extends Component {
 
 		this.state = {
 			latitude: -1,
-			longitude: -1
+			longitude: -1,
+			distance: -1,
+			restaurants: [ // dummy data
+				{
+					id: 0,
+					restaurant: 'Poke'
+				},
+				{
+					id: 1,
+					restaurant: 'Schwartz'
+				},
+				{
+					id: 2,
+					restaurant: 'Pizza'
+				}
+			],
+			restaurant: {
+				id: 0,
+				restaurant: 'Poke'
+			}
+			,
+			index: 0
 		}
-
-		this.positionReceived = this.positionReceived.bind(this);
-		this.positionNotReceived = this.positionNotReceived.bind(this);
 	}
 
 	componentDidMount()
@@ -36,7 +54,7 @@ class Query extends Component {
 	}
 
 	// Geolocation function on success
-	positionReceived(position)
+	positionReceived = (position) =>
 	{	
 		this.setState(
 			{
@@ -48,79 +66,102 @@ class Query extends Component {
 	}
 
 	// Geolocation function on failure
-	positionNotReceived(error)
+	positionNotReceived = (error) =>
 	{
 		console.log(error);
 	}
 
-	// Function to submit distance
-	submit(event)
+	// Function to shift left
+	prev = () =>
 	{	
+		const cur = this.state.index;
+		const len = this.state.restaurants.length;
+		const updated = cur - 1 < 0? (cur - 1 + len) % len : cur - 1;
+
+		this.setState(
+			{
+				...this.state,
+				index: updated,
+				restaurant: this.state.restaurants[updated]
+			}
+		);
+	}
+
+	// Function to shift right
+	next = () =>
+	{	
+		const cur = this.state.index;
+		const len = this.state.restaurants.length;
+		const updated = (cur + 1) % len;
+
+		this.setState(
+			{
+				...this.state,
+				index: updated,
+				restaurant: this.state.restaurants[updated]
+			}
+		);
+	}
+
+	// Function to submit distance
+	submit = (event) =>
+	{	
+		event.preventDefault();
+
+		console.log(this);
+
+		//const dist = this.state.distance;
 		
-		const dist = 500;//+(this.input.value);
-		
-		if (isNaN(dist)) 
+		if (isNaN(0)) 
 		{
 			console.log('Error: input is not a number');
 		}
 		else
 		{	
-			//while (this.state.latitude === -1 || this.state.longitude === -1) { }
-
 			
-			let list = ['Error'];
-			
-			
-			
-			const pyrmont = new google.maps.LatLng(50,50);
-			
-			/*
-			const map = new google.maps.Map(document.getElementById('map'), {
-				center: pyrmont,
-				zoom: 15 
-			}); */
-			
-			const request = {
-				location: pyrmont,
-				radius: dist,
-				type: ['restaurant']
-			}; 
-
-			const service = new google.maps.places.PlacesService(null);
-			
-			service.nearbySearch(request, (res,status) => {
-				list = res;
-			}); 
-
-			
-
-			/*
-			Store.dispatch(
-				actions.GET_RESTAURANTS_ACTION(
-					this.state.latitude,
-					this.state.longitude,
-					dist
-				)
-			); 
-			
-			//this.props.history.push({ pathname: '/ui' }); */
 		}
+	}
 
+	handleInput = (event) =>
+	{
 		event.preventDefault();
+		const dist = event.target.value;
+		this.setState(
+			{
+				...this.state,
+				distance: dist
+			}
+		);
 	}
 
 	render() {
+
 		return (
 			<div className="container-fluid">
 				<div className="row">
 					<div className="query-ctn">
-						<form className="form" onSubmit={this.submit}>
-							<label> 
-								Distance (km) 
-								<input type="text" ref={(input) => this.input = input}/>
-							</label>
-							<input type="submit" value="Look Up"/>
+						<form className="form" onSubmit={ this.submit }>
+							<label> Distance (km) </label>
+							<input type="text" onChange={ (event) => this.handleInput(event) } />
+							<button>LOOK UP</button>
 						</form>
+						<Restaurant
+							restaurant = { this.state.restaurant }
+						/>
+
+						<button type="button" className="btn btn-dark btn-lg" onClick={ this.prev }>
+							PREV
+						</button>
+						<button type="button" className="btn btn-dark btn-lg" onClick={ this.next }>
+							NEXT
+						</button>
+
+						<Map
+							//googleMapURL={`https://maps.googleapis.com/maps/api/js?key=AIzaSyCl2oicdbO4LjkylDN5w6trSvQBdb6-9zo&v=3.exp&libraries=geometry,drawing,places`}
+							//loadingElement={<div style={{ height: `100%` }} />}
+							//containerElement={<div style={{ height: `600px`, width: `600px` }} />}
+							//mapElement={<div style={{ height: `100%` }} />}
+						/>
 					</div>
 				</div>
 			</div>

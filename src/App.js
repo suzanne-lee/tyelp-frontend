@@ -6,7 +6,7 @@ import Query from './components/query';
 import Stories from './components/stories';
 import Accepted from './components/accepted';
 import Unaccepted from './components/unaccepted';
-import Store from './store/store';
+//import Store from './store/store';
 import async from './hoc/async';
 import './App.css';
 

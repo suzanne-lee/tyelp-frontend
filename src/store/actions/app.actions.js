@@ -1,5 +1,3 @@
-import google_api from '../../interceptors/google_api';
-
 /**
  * Application Actions
  */
