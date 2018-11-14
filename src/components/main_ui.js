@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Store from '../store/store';
+//import Store from '../store/store';
 import Restaurant from './restaurant';
 
 class MainUI extends Component {
@@ -91,7 +91,6 @@ class MainUI extends Component {
 		return (
 			<div className="container-fluid">
 				<div className="row">
-
 					<Restaurant
 						restaurant = { this.state.restaurant }
 					/>
