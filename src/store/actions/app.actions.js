@@ -6,8 +6,12 @@ export const SET_TOKEN = 'SET_TOKEN';
 export const SET_TOKEN_SUCCESS = 'SET_TOKEN_SUCCESS';
 export const LOGIN = 'LOGIN';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const GET_RESTAURANTS = 'GET_RESTAURANTS';
-export const GET_RESTAURANTS_SUCCESS = 'GET_RESTAURANTS_SUCCESS';
+export const SET_DISTANCE = 'SET_DISTANCE';
+export const SET_DISTANCE_SUCCESS = 'SET_DISTANCE_SUCCESS';
+export const SET_COORDINATES = 'SET_COORDINATES';
+export const SET_COORDINATES_SUCCESS = 'SET_COORDINATES_SUCCESS';
+export const SET_FAVORITES = 'SET_FAVORITE';
+export const SET_FAVORITES_SUCCESS = 'SET_FAVORITE_SUCCESS';
  
 /**
  * Application Action Creators
@@ -38,11 +42,11 @@ export const LOGIN_ACTION = (username, password) => {
     // asynchronous call using axios instance
 
     return (dispatch) => { 
-        dispatch(LOGIN_SUCCESS(user));
+        dispatch(LOGIN_ACTION_SUCCESS(user));
     };
 }
 
-export const LOGIN_SUCCESS_ACTION = (user) => {
+export const LOGIN_ACTION_SUCCESS = (user) => {
     return {
         type: LOGIN_SUCCESS,
         payload: {
@@ -51,62 +55,48 @@ export const LOGIN_SUCCESS_ACTION = (user) => {
     }
 }
 
-export const GET_RESTAURANTS_ACTION = (latitude, longitude, distance) => {
-    
-    let list = ['Error'];
-    /*
-    const google = window.google;
-    const pyrmont = new google.maps.LatLng(latitude, longitude);
-
-    const map = new google.maps.Map(document.getElementById('map'), {
-        center: pyrmont,
-        zoom: 15
-    });
-
-    const request = {
-        location: pyrmont,
-        radius: distance,
-        type: ['restaurant']
+export const SET_DISTANCE_ACTION = (distance) => {
+    return (dispatch) => {
+        dispatch(SET_DISTANCE_ACTION_SUCCESS(distance))
     };
+}
 
-    const service = new google.maps.places.PlacesService(map);
-    service.nearbySearch(request, (res,status) => {
-        list = res;
-    });
-
-    console.log(list);
-    */
-
-
-    /*
-    google_api.get()
-        .then(
-            (res) => {
-                console.log(res);
-                list = res.results;
-
-                return (dispatch) => { 
-                    dispatch(GET_RESTAURANTS_ACTION_SUCCESS(list));
-                };
-            }
-        )
-        .catch(
-            (err) => {
-                console.log(err);
-            }
-        );  
-    */
-
-    return (dispatch) => { 
-        dispatch(GET_RESTAURANTS_ACTION_SUCCESS(list));
-    };
-};
-
-export const GET_RESTAURANTS_ACTION_SUCCESS = (restaurants) => {
+export const SET_DISTANCE_ACTION_SUCCESS = (distance) => {
     return {
-        type: GET_RESTAURANTS_SUCCESS,
+        type: SET_DISTANCE_SUCCESS,
         payload: {
-            restaurants: restaurants
+            distance: distance
         }
-    }
-};
+    };
+}
+
+export const SET_COORDINATES_ACTION = (latitude, longitude) => {
+    return (dispatch) => {
+        dispatch(SET_COORDINATES_ACTION_SUCCESS(latitude, longitude))
+    };
+}
+
+export const SET_COORDINATES_ACTION_SUCCESS = (latitude, longitude) => {
+    return {
+        type: SET_COORDINATES_SUCCESS,
+        payload: {
+            latitude: latitude, 
+            longitude: longitude
+        }
+    };
+}
+
+export const SET_FAVORITES_ACTION = (favorite) => {
+    return (dispatch) => {
+        dispatch(SET_FAVORITES_ACTION_SUCCESS(favorite))
+    };
+}
+
+export const SET_FAVORITES_ACTION_SUCCESS = (favorite) => {
+    return {
+        type: SET_FAVORITES_SUCCESS,
+        payload: {
+            favorite: favorite
+        }
+    };
+}

@@ -3,13 +3,7 @@ import '../styles/unaccepted.css';
 
 class Unaccepted extends Component {
 
-    constructor(props)
-    {
-        super(props);
-        this.leave = this.leave.bind(this);
-    }
-
-    leave()
+    leave = () =>
     {
         this.props.history.push({ pathname: '/login' });
     }

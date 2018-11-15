@@ -8,10 +8,14 @@ class Restaurant extends Component {
         const { props: { restaurant } } = this;
 
         return (
-            <div className="restaurant-container">
-                id: { restaurant.id }, 
-                Restaurant: { restaurant.restaurant }
-            </div>
+            restaurant?
+                <div className="restaurant-container"> 
+                    Name: { restaurant.name } <br></br>
+                    Rating: { restaurant.rating } <br></br>
+                    Price level: { restaurant.price_level } <br></br>
+                    Address: { restaurant.vicinity }
+                </div> : 
+                <div className="restaurant-container"></div>
         );
     }
 }

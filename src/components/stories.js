@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-//import Store from '../store/store';
+import Store from '../store/store';
 import Story from './story';
 
 class Stories extends Component {
@@ -9,47 +9,22 @@ class Stories extends Component {
 		super(props);
 
 		this.state = {
-			stories: [ // dummy data
-				{	
-					id: 1,
-					restaurant: 'Mcdonald'
-				},
-				{
-					id: 2,
-					restaurant: 'Orange'
-				},
-				{
-					id: 3,
-					restaurant: 'Ganadara'
-				}
-			]
+			stories: []
 		}
-
-		this.back = this.back.bind(this);
 	}
 
-	componentDidMount()
+	componentWillMount()
 	{	
-		/*
 		this.setState(
 			{	
 				...this.state,
-				stories: Store.getState().app.user.stories
+				stories: Store.getState().app.user.favorites
 			}
 		);
-
-		Store.subscribe(
-			() => {
-				this.setState({
-					...this.state,
-					stories: Store.getState().app.user.stories
-				});
-			}
-		); */
 	}
 
 	// Function to route to Query component
-	back()
+	back = () =>
 	{
 		this.props.history.push({ pathname: '/query' });
 	}
