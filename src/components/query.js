@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-//import Store from '../store/store';
-//import * as actions from '../store/actions/app.actions';
+import Store from '../store/store';
+import * as actions from '../store/actions/app.actions';
 import Map from './map';
 import Restaurant from './restaurant';
 import '../styles/query.css';
@@ -12,33 +12,16 @@ class Query extends Component {
 		super(props);
 
 		this.state = {
-			latitude: -1,
-			longitude: -1,
-			distance: -1,
-			restaurants: [ // dummy data
-				{
-					id: 0,
-					restaurant: 'Poke'
-				},
-				{
-					id: 1,
-					restaurant: 'Schwartz'
-				},
-				{
-					id: 2,
-					restaurant: 'Pizza'
-				}
-			],
-			restaurant: {
-				id: 0,
-				restaurant: 'Poke'
-			}
-			,
+			restaurants: [],
+			restaurant: null,
+			distance: 0,
 			index: 0
 		}
+
+		this.getRestaurants = this.getRestaurants.bind(this);
 	}
 
-	componentDidMount()
+	componentWillMount()
 	{	
 		// Retrieve Geolocation
 		const options = {
@@ -47,27 +30,22 @@ class Query extends Component {
 		};
 		
 		if (navigator.geolocation)
-		{
-			navigator.geolocation.getCurrentPosition(this.positionReceived,this.positionNotReceived);
-			navigator.geolocation.watchPosition(this.positionReceived,this.positionNotReceived, options);
-		} 
+		{	
+			navigator.geolocation.getCurrentPosition(this.positionReceived, this.positionNotReceived);
+			navigator.geolocation.watchPosition(this.positionReceived, this.positionNotReceived, options);
+		}  
 	}
 
 	// Geolocation function on success
 	positionReceived = (position) =>
 	{	
-		this.setState(
-			{
-				...this.state,
-				latitude: position.coords.latitude,
-				longitude: position.coords.longitude
-			}
-		);
+		Store.dispatch(actions.SET_COORDINATES_ACTION(position.coords.latitude, position.coords.longitude));
 	}
 
 	// Geolocation function on failure
 	positionNotReceived = (error) =>
-	{
+	{	
+		// TODO: warning modal
 		console.log(error);
 	}
 
@@ -103,48 +81,64 @@ class Query extends Component {
 		);
 	}
 
+	select = () => 
+	{
+		const selection = this.state.restaurants[this.state.index];
+		Store.dispatch(actions.SET_FAVORITES_ACTION(selection));
+		this.props.history.push({ pathname: '/stories' })
+	}
+
 	// Function to submit distance
 	submit = (event) =>
 	{	
 		event.preventDefault();
-
-		console.log(this);
-
-		//const dist = this.state.distance;
+		const dist = this.state.distance;
 		
-		if (isNaN(0)) 
-		{
+		if (isNaN(dist)) 
+		{	
+			// TODO: warning modal
 			console.log('Error: input is not a number');
 		}
 		else
 		{	
-			
+			Store.dispatch(actions.SET_DISTANCE_ACTION(parseInt(dist)));
 		}
 	}
 
 	handleInput = (event) =>
 	{
 		event.preventDefault();
-		const dist = event.target.value;
 		this.setState(
 			{
 				...this.state,
-				distance: dist
+				distance: event.target.value
+			}
+		);
+	}
+
+	getRestaurants = (restaurants) => 
+	{	
+		this.setState(
+			{
+				...this.state,
+				restaurants: restaurants && restaurants.length > 0? restaurants : [],
+				restaurant: restaurants && restaurants.length > 0? restaurants[this.state.index] : null
 			}
 		);
 	}
 
 	render() {
-
 		return (
 			<div className="container-fluid">
 				<div className="row">
-					<div className="query-ctn">
+					<div className="query-container">
+
 						<form className="form" onSubmit={ this.submit }>
 							<label> Distance (km) </label>
 							<input type="text" onChange={ (event) => this.handleInput(event) } />
 							<button>LOOK UP</button>
 						</form>
+
 						<Restaurant
 							restaurant = { this.state.restaurant }
 						/>
@@ -155,13 +149,11 @@ class Query extends Component {
 						<button type="button" className="btn btn-dark btn-lg" onClick={ this.next }>
 							NEXT
 						</button>
+						<button type="button" className="btn btn-dark btn-lg" onClick={ this.select }>
+							COOL
+						</button>
 
-						<Map
-							//googleMapURL={`https://maps.googleapis.com/maps/api/js?key=AIzaSyCl2oicdbO4LjkylDN5w6trSvQBdb6-9zo&v=3.exp&libraries=geometry,drawing,places`}
-							//loadingElement={<div style={{ height: `100%` }} />}
-							//containerElement={<div style={{ height: `600px`, width: `600px` }} />}
-							//mapElement={<div style={{ height: `100%` }} />}
-						/>
+						<Map getRestaurants={ this.getRestaurants } />
 					</div>
 				</div>
 			</div>

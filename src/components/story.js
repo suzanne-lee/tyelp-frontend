@@ -5,14 +5,17 @@ class Story extends Component {
     render() {
 
         const { props: { item } } = this;
-        const id = item.id;
-        const restaurant = item.restaurant;
+        const restaurant = item;
 
         return (
-            <div className="story-container">
-                id: { id }, 
-                Restaurant: { restaurant.toUpperCase() }
-            </div>
+            restaurant?
+            <div className="story-container"> 
+                Name: { restaurant.name } <br></br>
+                Rating: { restaurant.rating } <br></br>
+                Price level: { restaurant.price_level } <br></br>
+                Address: { restaurant.vicinity }
+            </div> : 
+            <div className="story-container"></div>
         );
     }
 }

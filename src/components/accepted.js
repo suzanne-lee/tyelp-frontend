@@ -2,14 +2,8 @@ import React, { Component } from 'react';
 import '../styles/accepted.css';
 
 class Accepted extends Component {
-
-    constructor(props)
-    {
-        super(props);
-        this.leave = this.leave.bind(this);
-    }
     
-    leave()
+    leave = () =>
     {
         this.props.history.push({ pathname: '/login' });
     }
