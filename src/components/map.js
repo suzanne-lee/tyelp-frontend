@@ -27,7 +27,7 @@ const Map = compose(
                             lng: -87.624
                         },
                         places: [],
-                        directions: {},
+                        directions: [],
                         onMapMounted: ref => {
 
                             refs.map = ref;
@@ -35,7 +35,6 @@ const Map = compose(
                             if (refs.map) {
                                 
                                 const state = Store.getState().app;  
-                                
                                 
                                 this.setState(
                                     {
@@ -48,7 +47,7 @@ const Map = compose(
                                 );
                                 
                                 const service = new google.maps.places.PlacesService(refs.map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
-
+                               
                                 const request = {
                                     location: new google.maps.LatLng(state.coordinates.latitude, state.coordinates.longitude),
                                     radius: ('' + state.distance),
@@ -71,55 +70,66 @@ const Map = compose(
 
                                         const updatedState = Store.getState().app;
 
-                                        this.setState(
-                                            {
-                                                ...this.state,
-                                                center: {
-                                                    lat: updatedState.coordinates.latitude,
-                                                    lng: updatedState.coordinates.longitude
+                                        if (updatedState.queryMode === 'lookup') {
+
+                                            this.setState(
+                                                {
+                                                    ...this.state,
+                                                    center: {
+                                                        lat: updatedState.coordinates.latitude,
+                                                        lng: updatedState.coordinates.longitude
+                                                    }
                                                 }
-                                            }
-                                        );
+                                            );
+                                          
+                                            const updatedRequest = {
+                                                location: new google.maps.LatLng(updatedState.coordinates.latitude, updatedState.coordinates.longitude),
+                                                radius: ('' + updatedState.distance),
+                                                type: ['restaurant']
+                                            };
 
-                                        const updatedRequest = {
-                                            location: new google.maps.LatLng(updatedState.coordinates.latitude, updatedState.coordinates.longitude),
-                                            radius: ('' + updatedState.distance),
-                                            type: ['restaurant']
-                                        };
-
-                                        service.nearbySearch(updatedRequest, (result, status) => {
-                                            console.log(result[0].geometry.location.lat);
-                                            if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                                this.setState(
-                                                    {   
-                                                        ...this.state,
-                                                        places: result
-                                                    }
-                                                );
-                                            }
-                                            else {
-                                                this.setState(
-                                                    {   
-                                                        ...this.state,
-                                                        places: []
-                                                    }
-                                                );
-                                            }
-                                        });
+                                            service.nearbySearch(updatedRequest, (result, status) => {
+                                                
+                                                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                                                    this.setState(
+                                                        {   
+                                                            ...this.state,
+                                                            places: result
+                                                        }
+                                                    );
+                                                }
+                                                else {
+                                                    this.setState(
+                                                        {   
+                                                            ...this.state,
+                                                            places: []
+                                                        }
+                                                    );
+                                                }
+                                            });
+                                        }
                                     }
                                 );
                             }
                         },
                         onDirectionRender: destination => {
-
-                            if (destination && destination != -1) {
-                                
+                            
+                            if (destination && destination.destination && destination.destination != -1) {
+                               
                                 const DirectionsService = new google.maps.DirectionsService();
+                                var travel_mode = google.maps.TravelMode.WALKING;
+                                
+                                if (destination.travelMode === 'driving') {
+                                    travel_mode = google.maps.TravelMode.DRIVING;
+                                }
+                                else if (destination.travelMode === 'transit') {
+                                    travel_mode = google.maps.TravelMode.TRANSIT;
+                                }
 
                                 DirectionsService.route({
                                         origin: new google.maps.LatLng(this.state.center.lat, this.state.center.lng),
-                                        destination: destination,
-                                        travelMode: google.maps.TravelMode.DRIVING,
+                                        destination: destination.destination,
+                                        travelMode: travel_mode,
                                     }, (result, status) => {
                                     if (status === google.maps.DirectionsStatus.OK) {
                                         this.setState({
