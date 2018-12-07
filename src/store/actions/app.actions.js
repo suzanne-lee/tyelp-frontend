@@ -1,3 +1,4 @@
+import {instance} from "../../interceptors/axios";
 /**
  * Application Actions
  */
@@ -39,12 +40,19 @@ export const SET_TOKEN_ACTION_SUCCESS = (token) => {
 };
 
 export const LOGIN_ACTION = (username, password) => {
-
-    let user = null;
-    // asynchronous call using axios instance
-
-    return (dispatch) => { 
-        dispatch(LOGIN_ACTION_SUCCESS(user));
+    return (dispatch) => {
+        instance.logIn({
+            username,
+            password,
+        }).then((response) => {
+            return response.json()
+        }).then((userId) => {
+            //TODO Make the server return a username, and authentication token
+            dispatch(LOGIN_ACTION_SUCCESS({
+                username : `User #${userId}`,
+                favorites : [],
+            }));
+        });
     };
 }
 
