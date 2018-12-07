@@ -3,8 +3,7 @@ import '../styles/accepted.css';
 
 class Accepted extends Component {
     
-    leave = () =>
-    {
+    leave = () => {
         this.props.history.push({ pathname: '/login' });
     }
 

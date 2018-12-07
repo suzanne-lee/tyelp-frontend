@@ -15,7 +15,7 @@ const Map = compose(
         }
     ),
     lifecycle(
-        {
+        {   
             componentWillMount()
             {   
                 const refs = { };
@@ -28,12 +28,13 @@ const Map = compose(
                         },
                         places: [],
                         onMapMounted: ref => {
-                            
+
                             refs.map = ref;
 
                             if (refs.map) {
                                 
-                                const state = Store.getState().app;    
+                                const state = Store.getState().app;  
+                                
                                 
                                 this.setState(
                                     {
@@ -110,7 +111,7 @@ const Map = compose(
                         }
                     }
                 );  
-            }  
+            }
         }
     ),
     withScriptjs,
