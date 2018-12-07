@@ -32,10 +32,12 @@ class Query extends Component {
 
 	componentWillMount() {	
 		// Retrieve Geolocation
+		
+		/*
 		const options = {
 			enableHighAccuracy: false,
 			timeout: 6000000
-		};
+		}; */
 		
 		if (navigator.geolocation) {	
 			navigator.geolocation.getCurrentPosition(this.positionReceived, this.positionNotReceived);

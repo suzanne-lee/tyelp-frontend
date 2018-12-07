@@ -114,7 +114,7 @@ const Map = compose(
                         },
                         onDirectionRender: destination => {
                             
-                            if (destination && destination.destination && destination.destination != -1) {
+                            if (destination && destination.destination && destination.destination !== -1) {
                                
                                 const DirectionsService = new google.maps.DirectionsService();
                                 var travel_mode = google.maps.TravelMode.WALKING;
