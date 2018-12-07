@@ -1,2 +1,10 @@
+.query-container {
+    height: 700px;
+    width: 100%;
+}
 
-
+#map {
+    height: 750px;
+    width: 50%;
+    border: 1px solid black;
+}

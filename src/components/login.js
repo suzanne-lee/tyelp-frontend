@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 // This should be a container
 class Login extends Component {
+  
   render() {
 
     //Store.dispatch(actions.SET_TOKEN_ACTION('aKFtu5M'));

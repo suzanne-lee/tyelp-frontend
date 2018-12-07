@@ -2,15 +2,8 @@ import React, { Component } from 'react';
 import '../styles/accepted.css';
 
 class Accepted extends Component {
-
-    constructor(props)
-    {
-        super(props);
-        this.leave = this.leave.bind(this);
-    }
     
-    leave()
-    {
+    leave = () => {
         this.props.history.push({ pathname: '/login' });
     }
 
@@ -22,7 +15,7 @@ class Accepted extends Component {
                         <label>
                             OK :)
                         </label>
-                        <button type="button" class="btn btn-dark btn-lg" onClick={ this.leave }>
+                        <button type="button" className="btn btn-dark btn-lg" onClick={ this.leave }>
                             LEAVE
                         </button>
                     </div>   
