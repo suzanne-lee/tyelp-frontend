@@ -88,7 +88,7 @@ const Map = compose(
                                         };
 
                                         service.nearbySearch(updatedRequest, (result, status) => {
-                                            console.log(result[0].geometry.location.lat);
+                                          
                                             if (status === google.maps.places.PlacesServiceStatus.OK) {
                                                 this.setState(
                                                     {   

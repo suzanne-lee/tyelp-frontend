@@ -120,7 +120,7 @@ class Query extends Component {
 
 			const list  = this.shuffle(details.restaurants);
 			const direction = details.direction;
-			console.log(direction)
+
 			this.setState(
 				{
 					...this.state,
