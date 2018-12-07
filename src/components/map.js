@@ -1,6 +1,6 @@
 import React from "react";
 import { compose, withProps, lifecycle } from 'recompose';
-import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps";
+import { withScriptjs, withGoogleMap, GoogleMap, Marker, DirectionsRenderer } from "react-google-maps";
 import Store from '../store/store';
 
 const google = window.google;
@@ -27,6 +27,7 @@ const Map = compose(
                             lng: -87.624
                         },
                         places: [],
+                        directions: {},
                         onMapMounted: ref => {
 
                             refs.map = ref;
@@ -87,7 +88,7 @@ const Map = compose(
                                         };
 
                                         service.nearbySearch(updatedRequest, (result, status) => {
-                                            
+                                            console.log(result[0].geometry.location.lat);
                                             if (status === google.maps.places.PlacesServiceStatus.OK) {
                                                 this.setState(
                                                     {   
@@ -108,6 +109,27 @@ const Map = compose(
                                     }
                                 );
                             }
+                        },
+                        onDirectionRender: destination => {
+
+                            if (destination && destination != -1) {
+                                
+                                const DirectionsService = new google.maps.DirectionsService();
+
+                                DirectionsService.route({
+                                        origin: new google.maps.LatLng(this.state.center.lat, this.state.center.lng),
+                                        destination: destination,
+                                        travelMode: google.maps.TravelMode.DRIVING,
+                                    }, (result, status) => {
+                                    if (status === google.maps.DirectionsStatus.OK) {
+                                        this.setState({
+                                            directions: result,
+                                        });
+                                    } else {
+                                        //console.error('Cannot fetch direction(s)');
+                                    }
+                                });
+                            }
                         }
                     }
                 );  
@@ -123,13 +145,19 @@ const Map = compose(
                 ref={ props.onMapMounted }
                 defaultZoom={ 12 }
                 center={ props.center }
-                { ...props.getRestaurants(props.places) }
+                { ...props.getMapDetails({
+                    restaurants: props.places,
+                    direction: props.directions
+                }) }
+                { ...props.onDirectionRender(props.destination) }
             >      
                 { 
                     props.places && props.places.map(
                         (place, i) => <Marker key={ i } position={ { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() } } />
                     )
                 }   
+
+                { props.directions && <DirectionsRenderer directions={props.directions} />}
             </GoogleMap>
         )
     }

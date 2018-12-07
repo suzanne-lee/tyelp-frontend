@@ -5,7 +5,7 @@ const initialState = {
         username: null,
         favorites: []
     },
-    authenticated: false,
+    authenticated: true,
     token: null,
     distance: 5000,
     coordinates: {
