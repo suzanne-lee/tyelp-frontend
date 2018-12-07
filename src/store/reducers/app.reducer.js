@@ -7,7 +7,6 @@ const initialState = {
     },
     authenticated: false,
     token: null,
-    restaurants: [],
     distance: 5000,
     coordinates: {
         latitude: 45.505724099999995,
@@ -29,6 +28,21 @@ const appReducer = (state = initialState, action) => {
                 ...state,
                 user: action.payload.user,
                 authenticated: true
+            }
+        case actions.LOGOUT_SUCCESS: 
+            return {
+                ...state,
+                user: {
+                    username: null,
+                    favorites: []
+                },
+                authenticated: false,
+                token: null,
+                distance: 5000,
+                coordinates: {
+                    latitude: 45.505724099999995,
+                    longitude: -73.6995759
+                }
             }
         case actions.SET_DISTANCE_SUCCESS:
             return {
