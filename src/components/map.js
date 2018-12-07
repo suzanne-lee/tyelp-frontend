@@ -4,11 +4,12 @@ import { withScriptjs, withGoogleMap, GoogleMap, Marker, DirectionsRenderer } fr
 import Store from '../store/store';
 
 const google = window.google;
+const API_KEY = 'API_KEY_HERE';
 
 const Map = compose(
     withProps(
         {
-            googleMapURL: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCl2oicdbO4LjkylDN5w6trSvQBdb6-9zo&v=3.exp&libraries=geometry,drawing,places',
+            googleMapURL: 'https://maps.googleapis.com/maps/api/js?key=' + API_KEY + '&v=3.exp&libraries=geometry,drawing,places',
             loadingElement: <div style={{ height: '100%' }} />,
             containerElement: <div style={{ height: '400px' }} />,
             mapElement: <div style={{ height: '100%' }} />
