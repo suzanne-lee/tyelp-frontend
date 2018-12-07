@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router-dom';
+import Store from '../store/store';
+import * as actions from '../store/actions/app.actions';
 // import '../styles/login.css';
-// import * as actions from '../store/actions/app.actions';
-// import Store from '../store/store';
 
 // This should be a container
 class Login extends Component {
@@ -24,6 +24,10 @@ class Login extends Component {
     login() {
         if(this.state.username && this.state.password){
             // Check against backend values somehow
+            Store.dispatch(actions.LOGIN_ACTION(
+                this.state.username,
+                this.state.password
+            ));
         }
 
     }
@@ -36,9 +40,8 @@ class Login extends Component {
 
 
     render() {
-
-        if (this.state.redirectToReferrer /* || sessionStorage.getItem('userData')*/) {
-            return (<Redirect to={'/home'}/>)
+        if (this.props.authenticated /* || sessionStorage.getItem('userData')*/) {
+            return (<Redirect to={'/query'}/>)
         }
 
         return (
@@ -57,8 +60,6 @@ class Login extends Component {
     }
 }
 
-/*
-
 const mapStateToProps = state => {
   return {
     authenticated: state.app.authenticated,
@@ -72,6 +73,6 @@ const mapDispatchToProps = dispatch => {
   };
 }; 
 
-*/
 
-export default connect(/*null,mapDispatchToProps*/)(Login);
+
+export default connect(mapStateToProps,mapDispatchToProps)(Login);

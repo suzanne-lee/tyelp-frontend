@@ -9,7 +9,7 @@ import * as config from "./axios.config";
  */
 
 const instance = axios.create({
-    baseURL: config.baseURL
+    baseURL: config.baseUrl
 });
 /*
     body : {
