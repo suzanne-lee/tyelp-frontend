@@ -4,8 +4,7 @@ import Story from './story';
 
 class Stories extends Component {
 
-	constructor(props) 
-	{
+	constructor(props) {
 		super(props);
 
 		this.state = {
@@ -13,8 +12,7 @@ class Stories extends Component {
 		}
 	}
 
-	componentWillMount()
-	{	
+	componentWillMount() {	
 		this.setState(
 			{	
 				...this.state,
@@ -24,8 +22,7 @@ class Stories extends Component {
 	}
 
 	// Function to route to Query component
-	back = () =>
-	{
+	back = () => {
 		this.props.history.push({ pathname: '/query' });
 	}
 
