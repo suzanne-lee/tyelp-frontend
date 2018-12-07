@@ -6,6 +6,8 @@ export const SET_TOKEN = 'SET_TOKEN';
 export const SET_TOKEN_SUCCESS = 'SET_TOKEN_SUCCESS';
 export const LOGIN = 'LOGIN';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGOUT = 'LOGOUT';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCESS';
 export const SET_DISTANCE = 'SET_DISTANCE';
 export const SET_DISTANCE_SUCCESS = 'SET_DISTANCE_SUCCESS';
 export const SET_COORDINATES = 'SET_COORDINATES';
@@ -52,6 +54,21 @@ export const LOGIN_ACTION_SUCCESS = (user) => {
         payload: {
             user: user
         }
+    }
+}
+
+export const LOGOUT_ACTION = () => {
+
+    // API call to update DB
+
+    return (dispatch) => {
+       dispatch(LOGOUT_ACTION_SUCCESS());
+    }
+}
+
+export const LOGOUT_ACTION_SUCCESS = () => {
+    return {
+        type: LOGOUT_SUCCESS
     }
 }
 
