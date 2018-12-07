@@ -45,6 +45,12 @@ const appReducer = (state = initialState, action) => {
                     longitude: -73.6995759
                 }
             }
+        case actions.REGISTER_SUCCESS:
+            return {
+              ...state,
+              user: action.payload.user,
+              authenticated: true
+            }
         case actions.SET_DISTANCE_SUCCESS:
             return {
                 ...state,
