@@ -92,6 +92,13 @@ class Query extends Component {
 				queryMode: 'select',
 				selection: selection
 			}));
+      Store.dispatch(actions.SET_HISTORY_ACTION(
+        Store.getState().app.user.userID,
+        selection.name,
+				selection.rating,
+				selection.price_level,
+				selection.vicinity
+      ));
 			
 			this.setState({
 				...this.state,
