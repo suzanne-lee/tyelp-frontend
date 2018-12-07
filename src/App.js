@@ -52,9 +52,22 @@ class App extends Component {
 				<div>
 					{ this.state.authenticated?
 						<div>
-							<Link to="/query">Find Restaurant</Link>
-							<Link to="/stories">My Matches</Link>
-							<button onClick={ this.logout }>LogOut</button>
+							<nav className="navbar navbar-expand-lg navbar-light bg-light">
+								<h3 style={{marginLeft: '50px'}}>Munch Match</h3>
+								<div>
+								<ul className="navbar-nav mr-auto">
+									<li className="nav-item active">
+										<Link to="/query">Find Restaurant</Link>
+									</li>
+									<li className="nav-item active">
+										<Link to="/stories">My Matches</Link>
+									</li>
+									<li className="nav-item active">
+										<button type="button" className="btn btn-outline-primary" style={{marginLeft: '700px', marginRight: '50px'}} onClick={ this.logout }>Log Out</button>
+									</li>
+								</ul>
+								</div>
+							</nav>
 						</div> : null
 					}
 					<Switch>

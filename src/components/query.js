@@ -136,16 +136,19 @@ class Query extends Component {
 
 	render() {
 		return (
-			<div className="container-fluid">
+			<div className="container-fluid" style={{marginLeft: '50px', marginRight: '50px', width: '90%'}}>
 				<div className="row">
 					<div className="query-container">
-
+						
 						<form className="form" onSubmit={ this.submit }>
-							<label> Distance (km) </label>
-							<input type="text" onChange={ (event) => this.handleInput(event) } />
-							<button>LOOK UP</button>
-						</form>
 
+							<label> Distance (km) </label>
+
+							<input type="text" class="form-control" onChange={ (event) => this.handleInput(event) } />
+
+							<button type="button" class="btn btn-primary">LOOK UP</button>
+						</form>
+						
 						<Restaurant restaurant = { this.state.restaurant } />
 
 						<button type="button" className="btn btn-dark btn-lg" onClick={ this.prev }> PREV </button>
