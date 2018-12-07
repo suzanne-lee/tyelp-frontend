@@ -5,7 +5,7 @@ const initialState = {
         username: null,
         favorites: []
     },
-    authenticated: true,
+    authenticated: false,
     token: null,
     distance: 0,
     coordinates: {
@@ -44,6 +44,12 @@ const appReducer = (state = initialState, action) => {
                     latitude: 45.505724099999995,
                     longitude: -73.6995759
                 }
+            }
+        case actions.REGISTER_SUCCESS:
+            return {
+              ...state,
+              user: action.payload.user,
+              authenticated: true
             }
         case actions.SET_DISTANCE_SUCCESS:
             return {

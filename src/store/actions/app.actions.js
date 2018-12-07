@@ -1,3 +1,4 @@
+import axiosInstance from "../../interceptors/axios";
 /**
  * Application Actions
  */
@@ -8,12 +9,15 @@ export const LOGIN = 'LOGIN';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGOUT = 'LOGOUT';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCESS';
+export const REGISTER = 'REGISTER';
+export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const SET_DISTANCE = 'SET_DISTANCE';
 export const SET_DISTANCE_SUCCESS = 'SET_DISTANCE_SUCCESS';
 export const SET_COORDINATES = 'SET_COORDINATES';
 export const SET_COORDINATES_SUCCESS = 'SET_COORDINATES_SUCCESS';
 export const SET_FAVORITES = 'SET_FAVORITE';
 export const SET_FAVORITES_SUCCESS = 'SET_FAVORITE_SUCCESS';
+export const SET_HISTORY = 'SET_HISTORY';
  
 /**
  * Application Action Creators
@@ -43,9 +47,33 @@ export const LOGIN_ACTION = (username, password) => {
     let user = null;
     // asynchronous call using axios instance
 
-    return (dispatch) => { 
-        dispatch(LOGIN_ACTION_SUCCESS(user));
-    };
+    return (dispatch) => {
+    axiosInstance.logIn({
+      username,
+      password,
+    }).then((response) => {
+      var parsed = JSON.parse(response.data);
+      var userID = parsed['user_id'];
+
+      var data = [];
+
+      for(var x in parsed){
+        data.push(parsed[x]);
+      }
+
+      delete data['user_id'];
+      user = {
+        username: username,
+        userID: userID,
+        favorites: data
+      };
+      dispatch(LOGIN_ACTION_SUCCESS(user));
+      console.log("Authenticated");
+    }).catch(function (error) {
+      console.log('Error on Authentication');
+      console.log(error);
+    });
+  };
 }
 
 export const LOGIN_ACTION_SUCCESS = (user) => {
@@ -70,6 +98,38 @@ export const LOGOUT_ACTION_SUCCESS = () => {
     return {
         type: LOGOUT_SUCCESS
     }
+}
+
+export const REGISTER_ACTION = (username, firstName, lastName, password) => {
+  let user = null;
+
+  return (dispatch) => {
+    axiosInstance.register({
+      username,
+      firstName,
+      lastName,
+      password,
+    }).then((response) => {
+      user = {
+        username: username,
+        userID: JSON.parse(response.data)['user_id'],
+        favorites: []
+      };
+      console.log(JSON.parse(response.data)['user_id']);
+      dispatch(REGISTER_ACTION_SUCCESS(user));
+    }).catch(function (error) {
+      console.log(error);
+    });
+  };
+}
+
+export const REGISTER_ACTION_SUCCESS = (user) => {
+  return {
+    type: REGISTER_SUCCESS,
+    payload: {
+      user: user
+    }
+  }
 }
 
 export const SET_DISTANCE_ACTION = (distance) => {
@@ -116,4 +176,18 @@ export const SET_FAVORITES_ACTION_SUCCESS = (favorite) => {
             favorite: favorite
         }
     };
+}
+
+export const SET_HISTORY_ACTION = (userID, name, rating, price_level, vicinity) => {
+  return () => {
+    axiosInstance.addPlaceToHistory({
+      userID,
+      name,
+      rating,
+      price_level,
+      vicinity
+    }).catch(function (error) {
+      console.log(error);
+    });
+  };
 }
