@@ -14,10 +14,15 @@ class Query extends Component {
 			restaurants: [],
 			restaurant: null,
 			distance: 0,
-			index: 0
+			index: 0,
+			destination: -1,
+			travel: {
+				distance: "",
+				time: ""
+			}
 		}
 		
-		this.getRestaurants = this.getRestaurants.bind(this);
+		this.getMapDetails = this.getMapDetails.bind(this);
 	}
 
 	componentWillMount() {	
@@ -77,7 +82,13 @@ class Query extends Component {
 	select = () => {
 		const selection = this.state.restaurants[this.state.index];
 		Store.dispatch(actions.SET_FAVORITES_ACTION(selection));
-		this.props.history.push({ pathname: '/stories' })
+	
+		this.setState({
+			...this.state,
+			destination: this.state.restaurants[this.state.index].vicinity
+		});
+
+		//this.props.history.push({ pathname: '/stories' })
 	}
 
 	// Function to submit distance
@@ -104,16 +115,22 @@ class Query extends Component {
 		);
 	}
 
-	getRestaurants = (restaurants) => {	
-		if (restaurants) {
+	getMapDetails = (details) => {	
+		if (details) {
 
-			const list  = this.shuffle(restaurants);
+			const list  = this.shuffle(details.restaurants);
+			const direction = details.direction;
+			console.log(direction)
 			this.setState(
 				{
 					...this.state,
 					index: 0,
 					restaurants: list.length > 0? list : [],
-					restaurant: list.length > 0? list[0] : null
+					restaurant: list.length > 0? list[0] : null,
+					travel: {
+						distance: direction.routes && direction.routes.length > 0 && direction.routes[0].legs.length > 0? direction.routes[0].legs[0].distance.text : "",
+						time: direction.routes && direction.routes.length > 0 && direction.routes[0].legs.length > 0? direction.routes[0].legs[0].duration.text : ""
+					}
 				}
 			);
 		}	
@@ -144,6 +161,8 @@ class Query extends Component {
 							<label> Distance (km) </label>
 							<input type="text" onChange={ (event) => this.handleInput(event) } />
 							<button>LOOK UP</button>
+							<label> Travel Distance: { this.state.travel.distance } </label>
+							<label> Travel Distance: { this.state.travel.time } </label>
 						</form>
 
 						<Restaurant restaurant = { this.state.restaurant } />
@@ -152,7 +171,7 @@ class Query extends Component {
 						<button type="button" className="btn btn-dark btn-lg" onClick={ this.select }> SELECT </button>
 						<button type="button" className="btn btn-dark btn-lg" onClick={ this.next }> NEXT </button>
 
-						<Map getRestaurants={ this.getRestaurants } />
+						<Map getMapDetails={ this.getMapDetails } destination={ this.state.destination } />
 					</div>
 				</div>
 			</div>
