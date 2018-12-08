@@ -21,7 +21,7 @@ class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			authenticated: true
+			authenticated: false
 		}
 	}
 	
@@ -51,9 +51,24 @@ class App extends Component {
 				<div>
 					{ this.state.authenticated?
 						<div>
-							<Link to="/query">Find Restaurant</Link>
-							<Link to="/stories">My Matches</Link>
-							<button onClick={ this.logout }>LogOut</button>
+							<nav className="navbar navbar-dark bg-dark">
+								<a className="navbar-brand" href=""><h1><b><i>MUNCH MATCH</i></b></h1></a>
+								<ul className="navbar-nav">
+									<div className="row">
+										<div className="col">	
+											<li className="nav-item active">
+												<Link to="/query">Find Restaurant</Link>
+											</li>
+										</div>
+										<div className="col">
+											<li>
+												<Link to="/stories">My Matches</Link>
+											</li>
+										</div>
+									</div>
+								</ul>
+								<button className="btn btn-outline-primary my-2 my-sm-0"onClick={ this.logout }>Log Out</button>
+							</nav>
 						</div> : null
 					}
 					<Switch>

@@ -42,9 +42,11 @@ class Login extends Component {
     }
 
     return (
-      <div className="row" id="Body">
+      <div id="Body">
         <div className="medium-5 columns left">
-          <h4>Login</h4>
+          <h1><b><i>MUNCH MATCH</i></b></h1>
+	  <h3 style={{fontWeight: "300", letterSpacing: "2px"}}>Welcome</h3>
+	  <h4>Login</h4>
           <label>Username</label>
           <input type="text" name="username" placeholder="Username" onChange={this.onChange}/>
           <label>Password</label>

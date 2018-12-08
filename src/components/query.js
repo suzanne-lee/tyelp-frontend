@@ -219,7 +219,7 @@ class Query extends Component {
 						<form className="form" onSubmit={ this.submit }>
 							<label> Distance (m) </label>
 							<input type="text" onChange={ (event) => this.handleInput(event) } />
-							<button>LOOK UP</button>
+							<button type="button" className="btn btn-success">LOOK UP</button>
 							<div className="travel-mode">
 								<select onChange={ (event) => this.travelMode(event) }>
 									<option value="walk">Walk</option>
@@ -233,12 +233,18 @@ class Query extends Component {
 							</div>
 						</form>
 
-						<Restaurant restaurant = { this.state.restaurant } />
-
-						<button type="button" className="btn btn-dark btn-lg" onClick={ this.prev }> PREV </button>
-						<button type="button" className="btn btn-dark btn-lg" onClick={ this.select }> SELECT </button>
-						<button type="button" className="btn btn-dark btn-lg" onClick={ this.next }> NEXT </button>
-
+						<Restaurant restaurant = { this.state.restaurant } />	
+						<div className="row">
+							<div className="col-1">
+								<button type="button" className="btn btn-outline-primary" onClick={ this.prev }> PREV </button>
+							</div>
+							<div className="col-1">
+								<button type="button" className="btn btn-primary" onClick={ this.select }> SELECT </button>
+							</div>
+							<div className="col-1">
+								<button type="button" className="btn btn-outline-primary" onClick={ this.next }> NEXT </button>
+							</div>
+						</div>
 						<Map getMapDetails={ this.getMapDetails } destination={ this.state.destination } />
 					</div>
 				</div>
