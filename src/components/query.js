@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
-import Store from '../store/store';
-import * as actions from '../store/actions/app.actions';
+import {connect} from "react-redux";
+import store from '../store';
+import * as actions from '../store/action';
 import Map from './map';
 import Restaurant from './restaurant';
 import '../styles/query.css';
 
+/**
+    @typedef {{ lngLat : undefined|import("../store").LngLat }} QueryProps
+    @typedef {{}} QueryState
+
+    @extends {Component<QueryProps, QueryState>}
+*/
 class Query extends Component {
 
+	/** @param {any} props */
 	constructor(props) {
 		super(props);
 
@@ -26,38 +34,38 @@ class Query extends Component {
 			},
 			queryMode: 'lookup'
 		}
-		
-		this.getMapDetails = this.getMapDetails.bind(this);
 	}
 
-	componentWillMount() {	
+	componentWillMount() {
 		// Retrieve Geolocation
-		
+
 		/*
 		const options = {
 			enableHighAccuracy: false,
 			timeout: 6000000
 		}; */
-		
-		if (navigator.geolocation) {	
+
+		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(this.positionReceived, this.positionNotReceived);
 			//navigator.geolocation.watchPosition(this.positionReceived, this.positionNotReceived, options);
-		}  
+		}
 	}
 
 	// Geolocation function on success
-	positionReceived = (position) => {	
-		Store.dispatch(actions.SET_COORDINATES_ACTION(position.coords.latitude, position.coords.longitude));
+	/** @param {any} position */
+	positionReceived = (position) => {
+		//store.dispatch(actions.SET_COORDINATES_ACTION(position.coords.latitude, position.coords.longitude));
 	}
 
 	// Geolocation function on failure
-	positionNotReceived = (error) => {	
+	/** @param {any} error */
+	positionNotReceived = (error) => {
 		// TODO: warning modal
 		console.log(error);
 	}
 
 	// Function to shift left
-	prev = () => {	
+	prev = () => {
 		const cur = this.state.index;
 		const len = this.state.restaurants.length;
 		const updated = cur - 1 < 0? (cur - 1 + len) % len : cur - 1;
@@ -72,7 +80,7 @@ class Query extends Component {
 	}
 
 	// Function to shift right
-	next = () => {	
+	next = () => {
 		const cur = this.state.index;
 		const len = this.state.restaurants.length;
 		const updated = (cur + 1) % len;
@@ -87,21 +95,21 @@ class Query extends Component {
 	}
 
 	select = () => {
-		if (this.state.restaurants.length > 0) {
-			
+		/*if (this.state.restaurants.length > 0) {
+
 			const selection = this.state.restaurants[this.state.index];
-			Store.dispatch(actions.SET_FAVORITES_ACTION({
+			store.dispatch(actions.SET_FAVORITES_ACTION({
 				queryMode: 'select',
 				selection: selection
 			}));
-      Store.dispatch(actions.SET_HISTORY_ACTION(
-        Store.getState().app.user.userID,
+      store.dispatch(actions.SET_HISTORY_ACTION(
+        store.getState().app.me.userID,
         selection.name,
 				selection.rating,
 				selection.price_level,
 				selection.vicinity
       ));
-			
+
 			this.setState({
 				...this.state,
 				destination: {
@@ -110,21 +118,22 @@ class Query extends Component {
 				},
 				queryMode: 'select'
 			});
-		}
+		}*/
 	}
 
 	// Function to submit distance
-	submit = (event) => {	
-		event.preventDefault();
+	/** @param {any} event */
+	submit = (event) => {
+		/*event.preventDefault();
 		const dist = this.state.distance;
 
-		if (isNaN(dist) || !dist || dist.length <= 0) {	
+		if (isNaN(dist) || !dist || dist.length <= 0) {
 			// TODO: warning modal
 			console.log('Error: input is not a number');
 		}
-		else {	
-			Store.dispatch(actions.SET_DISTANCE_ACTION(
-				{	
+		else {
+			store.dispatch(actions.SET_DISTANCE_ACTION(
+				{
 					queryMode: 'lookup',
 					distance: parseInt(dist)
 				}
@@ -134,9 +143,10 @@ class Query extends Component {
 				...this.state,
 				queryMode: 'lookup'
 			});
-		}
+		}*/
 	}
 
+	/** @param {any} event */
 	handleInput = (event) => {
 		event.preventDefault();
 		this.setState(
@@ -147,6 +157,7 @@ class Query extends Component {
 		);
 	}
 
+	/** @param {any} event */
 	travelMode = (event) => {
 		event.preventDefault();
 		this.setState({
@@ -158,11 +169,12 @@ class Query extends Component {
 		})
 	}
 
-	getMapDetails = (details) => {	
+	/** @param {any} details */
+	getMapDetails = (details) => {
 		if (details) {
 
 			if (this.state.queryMode === 'lookup') {
-				
+
 				const list  = this.shuffle(details.restaurants);
 				const direction = details.direction;
 
@@ -179,9 +191,9 @@ class Query extends Component {
 					}
 				);
 			}
-			else {	
+			else {
 				const direction = details.direction;
-				
+
 				this.setState(
 					{
 						...this.state,
@@ -192,11 +204,12 @@ class Query extends Component {
 					}
 				);
 			}
-		}	
+		}
 	}
 
+	/** @param {any} originalArray */
 	shuffle = (originalArray) => {
-		var array = [].concat(originalArray);
+		var array = originalArray.slice();
 		var currentIndex = array.length, temporaryValue, randomIndex;
 
 		while (0 !== currentIndex) {
@@ -233,7 +246,7 @@ class Query extends Component {
 							</div>
 						</form>
 
-						<Restaurant restaurant = { this.state.restaurant } />	
+						<Restaurant restaurant = { this.state.restaurant } />
 						<div className="row">
 							<div className="col-1">
 								<button type="button" className="btn btn-outline-primary" onClick={ this.prev }> PREV </button>
@@ -245,7 +258,7 @@ class Query extends Component {
 								<button type="button" className="btn btn-outline-primary" onClick={ this.next }> NEXT </button>
 							</div>
 						</div>
-						<Map getMapDetails={ this.getMapDetails } destination={ this.state.destination } />
+						<Map getMapDetails={ this.getMapDetails } center={this.props.lngLat}/>
 					</div>
 				</div>
 			</div>
@@ -253,4 +266,14 @@ class Query extends Component {
 	}
 }
 
-export default Query;
+
+/**
+    @param {import("../store").State} state
+    @returns {QueryProps}
+*/
+function mapStateToProps (state) {
+    return {
+        lngLat: state.lngLat,
+    };
+};
+export default connect(mapStateToProps)(Query);

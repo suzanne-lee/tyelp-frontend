@@ -1,89 +1,112 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Switch, Redirect, Route, Link } from 'react-router-dom';
+import {connect} from "react-redux";
+import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
 import Login from './components/login';
 import Register from './components/register';
 import Stories from './components/stories';
 import Accepted from './components/accepted';
 import Unaccepted from './components/unaccepted';
-import Store from './store/store';
+import store from './store';
 import async from './hoc/async';
-import * as actions from './store/actions/app.actions';
+import * as actions from './store/action';
 import './App.css';
+import * as path from "./path";
 
 const AsyncQuery = async(
-	() => {
-		return import('./components/query');
-	}
+    () => {
+        return import('./components/query');
+    }
 );
 
+/**
+    @typedef {{ me : undefined|import("./store").Me }} AppProps
+    @typedef {{}} AppState
+
+    @extends {Component<AppProps, AppState>}
+*/
 class App extends Component {
+    logout = () => {
+        store.dispatch(actions.LOG_OUT_ACTION_SUCCESS());
+    }
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			authenticated: false
-		}
-	}
-	
-	componentDidMount() {	
-		
-		Store.subscribe(
-			() => {
-				const updatedState = Store.getState().app;
+    renderLoggedOutNavigationBar () {
 
-				this.setState(
-					{
-						...this.state,
-						authenticated: updatedState.authenticated
-					}
-				);
-			}
-		);
-	}
-
-	logout = () => {
-		Store.dispatch(actions.LOGOUT_ACTION());
-	}
-
+    }
+    renderLoggedOutRoutes () {
+        return (
+            <Switch>
+                <Route path={path.logIn} exact component={Login} />
+                <Route path={path.register} exact component={Register} />
+                <Route path={"/"} component={Login} />
+            </Switch>
+        );
+    }
+    renderLoggedInNavigationBar () {
+        return (
+            <div>
+                <nav className="navbar navbar-dark bg-dark">
+                    <Link className="navbar-brand" to={path.root}><h1><b><i>MUNCH MATCH</i></b></h1></Link>
+                    <ul className="navbar-nav">
+                        <div className="row">
+                            <div className="col">
+                                <li className="nav-item active">
+                                    <Link to={path.nearby}>Find Restaurant</Link>
+                                </li>
+                            </div>
+                            <div className="col">
+                                <li>
+                                    <Link to="/stories">My Matches</Link>
+                                </li>
+                            </div>
+                        </div>
+                    </ul>
+                    <button className="btn btn-outline-primary my-2 my-sm-0"onClick={ this.logout }>Log Out</button>
+                </nav>
+            </div>
+        );
+    }
+    renderLoggedInRoutes () {
+        return (
+            <Switch>
+                <Route path={path.nearby} component={ AsyncQuery } />
+                <Route path='/stories' component={ Stories } />
+                <Route path='/accepted' component={ Accepted } />
+                <Route path='/unaccepted' component={ Unaccepted } />
+                <Route path={"/"} component={AsyncQuery} />
+            </Switch>
+        );
+    }
 	render() {
-		return (
-			<BrowserRouter /* basename=''*/>
-				<div>
-					{ this.state.authenticated?
-						<div>
-							<nav className="navbar navbar-dark bg-dark">
-								<a className="navbar-brand" href=""><h1><b><i>MUNCH MATCH</i></b></h1></a>
-								<ul className="navbar-nav">
-									<div className="row">
-										<div className="col">	
-											<li className="nav-item active">
-												<Link to="/query">Find Restaurant</Link>
-											</li>
-										</div>
-										<div className="col">
-											<li>
-												<Link to="/stories">My Matches</Link>
-											</li>
-										</div>
-									</div>
-								</ul>
-								<button className="btn btn-outline-primary my-2 my-sm-0"onClick={ this.logout }>Log Out</button>
-							</nav>
-						</div> : null
-					}
-					<Switch>
-						<Route path='/login' exact component={ Login } />
-            <Route path='/register' exact component={ Register } />
-						{ this.state.authenticated? <Route path='/query' component={ AsyncQuery } /> : null }
-						{ this.state.authenticated? <Route path='/stories' component={ Stories } /> : null }
-						<Route path='/accepted' component={ Accepted } />
-						<Route path='/unaccepted' component={ Unaccepted } />
-						<Redirect from='/' to='/login'/>
-					</Switch>
-				</div>
-			</BrowserRouter>
-		);
-	}
+        const loggedIn = this.props.me !== undefined;
+        if (loggedIn) {
+            return (
+                <BrowserRouter>
+                    <div>
+                        {this.renderLoggedInNavigationBar()}
+                        {this.renderLoggedInRoutes()}
+                    </div>
+                </BrowserRouter>
+            );
+        } else {
+            return (
+                <BrowserRouter>
+                    <div>
+                        {this.renderLoggedOutNavigationBar()}
+                        {this.renderLoggedOutRoutes()}
+                    </div>
+                </BrowserRouter>
+            );
+        }
+    }
 }
 
-export default App;
+/**
+    @param {import("./store").State} state
+    @returns {AppProps}
+*/
+function mapStateToProps (state) {
+    return {
+        me: state.me,
+    };
+};
+export default connect(mapStateToProps)(App);

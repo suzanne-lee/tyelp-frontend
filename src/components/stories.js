@@ -1,54 +1,68 @@
+//TODO Refactor
 import React, { Component } from 'react';
-import Store from '../store/store';
+import {connect} from "react-redux";
+import {Redirect} from "react-router-dom";
+import store from '../store';
 import Story from './story';
+import * as path from "../path";
 
+/**
+    @typedef {{ me : undefined|import("../store").Me }} StoriesProps
+    @typedef {{ goBack : boolean }} StoriesState
+
+    @extends {Component<StoriesProps>}
+*/
 class Stories extends Component {
+    /** @param {StoriesProps} props */
+    constructor(props) {
+        super(props);
 
-	constructor(props) {
-		super(props);
+        /** @type {StoriesState} */
+        this.state = {
+            goBack : false,
+        };
+    }
 
-		this.state = {
-			stories: []
-		}
-	}
+    goBack = () => {
+        this.setState({
+            goBack : true,
+        });
+    };
 
-	componentWillMount() {	
-		this.setState(
-			{	
-				...this.state,
-				stories: Store.getState().app.user.favorites
-			}
-		);
-	}
+    render() {
+        if (this.props.me == undefined) {
+            return (<Redirect to={path.logIn}/>);
+        }
+        if (this.state.goBack) {
+            return (<Redirect to={path.nearby}/>)
+        }
+        return (
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="stories-container">
+                        {
+                            this.props.me.matches.map(
+                                (item, i) => <Story key = {i} item = {item}/>
+                            )
+                        }
 
-	// Function to route to Query component
-	back = () => {
-		this.props.history.push({ pathname: '/query' });
-	}
-
-	render() {
-		return (
-			<div className="container-fluid">
-				<div className="row">
-					<div className="stories-container">
-						{
-							this.state.stories.map(
-								(item,i) => 
-									<Story
-										key = { i }
-										item = { item }
-									/>	
-							)
-						}
-
-						<button type="button" className="btn btn-dark btn-lg" onClick={ this.back }>
+                        <button type="button" className="btn btn-dark btn-lg" onClick={this.goBack}>
                             BACK
                         </button>
-					</div>
-				</div>
-			</div>
-		);
-	}
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
 
-export default Stories;
+/**
+    @param {import("../store").State} state
+    @returns {StoriesProps}
+*/
+function mapStateToProps (state) {
+    return {
+        me: state.me,
+    };
+};
+export default connect(mapStateToProps)(Stories);
