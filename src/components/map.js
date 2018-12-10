@@ -397,14 +397,22 @@ class Map extends Component {
         );
     }
     renderEndOfNearbyItems () {
+        const nearbySkipped = (this.state.nearbySkipped == undefined) ?
+            [] :
+            this.state.nearbySkipped;
         return (
             <div className="card">
-                return <img className="card-img-top" src={"/the-end.jpg"} height={320}/>
+                <img className="card-img-top" src={"/the-end.jpg"} height={320}/>
                 <div className="card-body">
                     <h5 className="card-title">
                         The End
                     </h5>
                     You've reached the end. Would you like to start over?
+                    <div style={{ color : "gray" }}>
+                        <small>
+                            {nearbySkipped.length} restaurants found
+                        </small>
+                    </div>
                     <div>
                         <button
                             type="button"
