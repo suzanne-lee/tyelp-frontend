@@ -17,9 +17,6 @@
     @property {number} lat
     @property {number} lng
 
-    @typedef {"lookup"} QueryMode
-    - TODO Find out exactly what `queryMode` values there are
-
     @typedef {{
         logIn? : string,
         match? : string,
