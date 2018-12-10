@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import {connect} from "react-redux";
-import store from '../store';
 import * as actions from '../store/action';
 import Map from './map';
-import Restaurant from './restaurant';
 import '../styles/query.css';
 
 /**
@@ -233,66 +231,33 @@ class Query extends Component {
 
     render() {
         return (
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="query-container">
-
-                        {/*<form className="form" onSubmit={ this.submit }>
-                            <label> Distance (m) </label>
-                            <input type="text" onChange={ (event) => this.handleInput(event) } />
-                            <button type="button" className="btn btn-success">LOOK UP</button>
-                            <div className="travel-mode">
-                                <select onChange={ (event) => this.travelMode(event) }>
-                                    <option value="walk">Walk</option>
-                                      <option value="transit">Transit</option>
-                                      <option value="driving">Driving</option>
-                                </select>
-                            </div>
-                            <div className="travel-info">
-                                <label> Travel Distance: { this.state.travel.distance } </label>
-                                <label> Travel Distance: { this.state.travel.time } </label>
-                            </div>
-                        </form>
-
-                        <Restaurant restaurant = { this.state.restaurant } />
-                        <div className="row">
-                            <div className="col-1">
-                                <button type="button" className="btn btn-outline-primary" onClick={ this.prev }> PREV </button>
-                            </div>
-                            <div className="col-1">
-                                <button type="button" className="btn btn-primary" onClick={ this.select }> SELECT </button>
-                            </div>
-                            <div className="col-1">
-                                <button type="button" className="btn btn-outline-primary" onClick={ this.next }> NEXT </button>
-                            </div>
-                        </div>*/}
-                        <Map
-                            getMapDetails={this.getMapDetails}
-                            center={this.props.latLng}
-                            onMatch={({placeId}) => {
-                                if (this.props.me == undefined) {
-                                    return;
-                                }
-                                console.log("Match", placeId);
-                                this.props.match({
-                                    placeId,
-                                    authenticationToken : this.props.me.authenticationToken
-                                });
-                            }}
-                            onMatchSelected={({placeId}) => {
-                                this.props.matchSelected({
-                                    placeId
-                                });
-                            }}
-                            currentMatch={this.props.currentMatch}
-                            matches={
-                                this.props.me == undefined ?
-                                [] :
-                                this.props.me.matches
-                            }
-                        />
-                    </div>
-                </div>
+            <div className="container">
+                <Map
+                    getMapDetails={this.getMapDetails}
+                    center={this.props.latLng}
+                    onMatch={(match) => {
+                        if (this.props.me == undefined) {
+                            return;
+                        }
+                        console.log("Match", match);
+                        this.props.match({
+                            placeId : match.placeId,
+                            authenticationToken : this.props.me.authenticationToken,
+                            match : match,
+                        });
+                    }}
+                    onMatchSelected={({placeId}) => {
+                        this.props.matchSelected({
+                            placeId
+                        });
+                    }}
+                    currentMatch={this.props.currentMatch}
+                    matches={
+                        this.props.me == undefined ?
+                        [] :
+                        this.props.me.matches
+                    }
+                />
             </div>
         );
     }

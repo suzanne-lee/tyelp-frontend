@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as config from "../../config";
+import * as cookie from "js-cookie";
 
 const axiosInstance = axios.create({
     baseURL: config.apiBaseUrl
@@ -27,6 +28,8 @@ const axiosInstance = axios.create({
     @typedef {{
         placeId : string,
         authenticationToken : string,
+        //Should only be used by the mock api
+        match : Match,
     }} MatchArgs
 */
 const api = {
@@ -75,37 +78,82 @@ const api = {
         );
     },
 };
-function randomRating () {
-    return 1 + Math.random() * 4;
+
+/**
+    @param {string} emailAddress
+    @returns {boolean}
+*/
+function mockUserExists (emailAddress) {
+    return cookie.get(`MockUserEmail-${emailAddress}`) !== undefined;
 }
-function randomPriceLevel () {
-    return /** @type {0|1|2|3|4} */(Math.floor(Math.random() * 5));
+/**
+    @param {string} authenticationToken
+    @returns {Me}
+*/
+function getMockUser (authenticationToken) {
+    const mockUser = cookie.get(`MockUser-${authenticationToken}`);
+    if (mockUser === undefined) {
+        throw new Error(`Invalid email address or password`);
+    } else {
+        return JSON.parse(mockUser);
+    }
 }
+/**
+    @param {RegisterArgs} args
+    @returns {Me}
+*/
+function registerMockUser (args) {
+    const authenticationToken = btoa(`${args.emailAddress}:${args.password}`);
+    if (mockUserExists(args.emailAddress)) {
+        throw new Error(`User already exists`);
+    } else {
+        /** @type {Me} */
+        const me = {
+            displayName: args.displayName,
+            authenticationToken,
+            matches: [],
+        };
+        cookie.set(`MockUser-${authenticationToken}`, JSON.stringify(me));
+        cookie.set(`MockUserEmail-${args.emailAddress}`, "true");
+        return me;
+    }
+}
+/**
+    @param {LogInArgs} args
+    @returns {Me}
+*/
+function logInMockUser (args) {
+    const authenticationToken = btoa(`${args.emailAddress}:${args.password}`);
+    return getMockUser(authenticationToken);
+}
+/**
+    @param {MatchArgs} args
+    @returns {Match}
+*/
+function mockMatch (args) {
+    const me = getMockUser(args.authenticationToken);
+    if (me.matches.some(m => m.placeId === args.placeId)) {
+        throw new Error(`Already matched`);
+    }
+    me.matches.push(args.match);
+    cookie.set(`MockUser-${args.authenticationToken}`, JSON.stringify(me));
+    return args.match;
+}
+
 const mockApi = {
     /**
         @param {RegisterArgs} args
         @returns {import("axios").AxiosPromise<Me>}
     */
     register : (args) => {
-        return Promise.resolve({
-            status : 200,
-            statusText : "OK",
-            headers : {},
-            config : {},
-            data : {
-                displayName: args.displayName,
-                authenticationToken: btoa(`${args.emailAddress}:${args.password}`),
-                matches: [
-                    {
-                        placeId : "ChIJN1t_tDeuEmsRUsoyG83frY4",
-                        name : "Mock Place",
-                        rating : randomRating(),
-                        price_level : randomPriceLevel(),
-                        vicinity : "Mock Vicinity",
-                        matchedAt : new Date("2018-06-14 14:30:67"),
-                    }
-                ],
-            }
+        return new Promise((resolve) => {
+            resolve({
+                status : 200,
+                statusText : "OK",
+                headers : {},
+                config : {},
+                data : registerMockUser(args),
+            });
         });
     },
     /**
@@ -113,25 +161,14 @@ const mockApi = {
         @returns {import("axios").AxiosPromise<Me>}
     */
     logIn : (args) => {
-        return Promise.resolve({
-            status : 200,
-            statusText : "OK",
-            headers : {},
-            config : {},
-            data : {
-                displayName: "Mock Me",
-                authenticationToken: btoa(`${args.emailAddress}:${args.password}`),
-                matches: [
-                    {
-                        placeId : "ChIJN1t_tDeuEmsRUsoyG83frY4",
-                        name : "Mock Place",
-                        rating : randomRating(),
-                        price_level : randomPriceLevel(),
-                        vicinity : "Mock Vicinity",
-                        matchedAt : new Date("2018-06-14 14:30:67"),
-                    }
-                ],
-            }
+        return new Promise((resolve) => {
+            resolve({
+                status : 200,
+                statusText : "OK",
+                headers : {},
+                config : {},
+                data : logInMockUser(args),
+            });
         });
     },
     /**
@@ -139,25 +176,14 @@ const mockApi = {
         @returns {import("axios").AxiosPromise<Me>}
     */
     me : (args) => {
-        return Promise.resolve({
-            status : 200,
-            statusText : "OK",
-            headers : {},
-            config : {},
-            data : {
-                displayName: "Mock Me",
-                authenticationToken: args.authenticationToken,
-                matches: [
-                    {
-                        placeId : "ChIJN1t_tDeuEmsRUsoyG83frY4",
-                        name : "Mock Place",
-                        rating : randomRating(),
-                        price_level : randomPriceLevel(),
-                        vicinity : "Mock Vicinity",
-                        matchedAt : new Date("2018-06-14 14:30:67"),
-                    }
-                ],
-            }
+        return new Promise((resolve) => {
+            resolve({
+                status : 200,
+                statusText : "OK",
+                headers : {},
+                config : {},
+                data : getMockUser(args.authenticationToken),
+            });
         });
     },
     /**
@@ -165,19 +191,14 @@ const mockApi = {
         @returns {import("axios").AxiosPromise<Match>}
     */
     match : (args) => {
-        return Promise.resolve({
-            status : 200,
-            statusText : "OK",
-            headers : {},
-            config : {},
-            data : {
-                placeId : args.placeId,
-                name : `Place ${args.placeId}`,
-                rating : randomRating(),
-                price_level : randomPriceLevel(),
-                vicinity : `Vicinity ${args.placeId}`,
-                matchedAt : new Date(),
-            }
+        return new Promise((resolve) => {
+            resolve({
+                status : 200,
+                statusText : "OK",
+                headers : {},
+                config : {},
+                data : mockMatch(args),
+            });
         });
     },
 };

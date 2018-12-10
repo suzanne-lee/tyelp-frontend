@@ -7,7 +7,10 @@ import * as path from "../path";
 // import '../styles/login.css';
 
 /**
-    @typedef {{ me : undefined|import("../store").Me }} RegisterProps
+    @typedef {{
+        me : undefined|import("../store").Me,
+        errorMessages : import("../store").ErrorMessageCollection,
+    }} RegisterProps
     @typedef {import("../store/action").RegisterArgs} RegisterState
 
     @extends {Component<RegisterProps, RegisterState>}
@@ -80,6 +83,7 @@ class Register extends Component {
 
                 <input type="submit" className="button success" value="Register" onClick={this.register}/>
                 <a href={path.logIn}>Login</a>
+                {this.props.errorMessages.register}
                 </div>
             </div>
         );
@@ -93,6 +97,7 @@ class Register extends Component {
 function mapStateToProps (state) {
     return {
         me: state.me,
+        errorMessages : state.errorMessages,
     };
 };
 export default connect(mapStateToProps)(Register);

@@ -1,13 +1,7 @@
 import React, {Component} from "react";
-import {connect} from "react-redux";
-import { compose, withProps, lifecycle } from 'recompose';
-import {withScriptjs, withGoogleMap, GoogleMap, Marker, DirectionsRenderer} from "react-google-maps";
-import store from '../store';
-import * as config from "../config";
-import axios from "axios";
+import {withGoogleMap, GoogleMap, Marker, DirectionsRenderer} from "react-google-maps";
 import * as maps from "../maps";
-import { MATCH_ACTION } from "../store/action";
-import * as moment from "moment";
+import {PlaceCard} from "./place-card";
 
 const MyMap = withGoogleMap(props => (
     <GoogleMap
@@ -16,7 +10,6 @@ const MyMap = withGoogleMap(props => (
     >
         <Marker position={props.center} icon="/me.png"/>
         {props.children}
-        { /*props.directions && <DirectionsRenderer directions={props.directions}/>*/ }
     </GoogleMap>
 ))
 
@@ -30,9 +23,7 @@ const MyMap = withGoogleMap(props => (
                 restaurants : [],
                 direction : [],
             }) => void,
-            onMatch : (args : {
-                placeId : string,
-            }) => void,
+            onMatch : (args : import("../store").Match) => void,
             onMatchSelected : (args : {
                 placeId : string,
             }) => void,
@@ -198,162 +189,6 @@ class Map extends Component {
         );
     }
 
-    /**
-        @param {number} rating
-        @returns {JSX.Element}
-    */
-    renderRating (rating) {
-        if (typeof rating !== "number") {
-            return <div style={{ color : "gray" }}>Unknown rating</div>
-        }
-        if (rating < 0) {
-            rating = 0;
-        }
-        if (rating > 5) {
-            rating = 5;
-        }
-        const intRating = Math.floor(rating);
-        const hasHalfRating = Math.round(rating - intRating) === 1;
-
-        const stars = [];
-        for (let i=0; i<intRating; ++i) {
-            stars.push(<i key={i} className="fas fa-star"></i>);
-        }
-        if (hasHalfRating) {
-            stars.push(<i key={"half"} className="fas fa-star-half-alt"></i>);
-        }
-
-        const starsLeft = 5 - Math.round(rating);
-        for (let i=0; i<starsLeft; ++i) {
-            stars.push(<i key={`stars-left-${i}`} className="far fa-star"></i>);
-        }
-        return (
-            <div>
-                {stars}
-                {rating}/5.0
-            </div>
-        )
-    }
-
-    /**
-        @param {0|1|2|3|4} priceLevel
-        @returns {string}
-    */
-    getPriceLevelText (priceLevel) {
-        switch (priceLevel) {
-            case 0: {
-                return "Free!";
-            }
-            case 1: {
-                return "Cheap";
-            }
-            case 2: {
-                return "Fairly Priced";
-            }
-            case 3: {
-                return "Expensive";
-            }
-            case 4: {
-                return "Very Expensive";
-            }
-            default: {
-                return "Unknown Cost";
-            }
-        }
-    }
-    /**
-        @param {0|1|2|3|4} priceLevel
-        @returns {JSX.Element}
-    */
-    renderPriceLevel (priceLevel) {
-        if (typeof priceLevel !== "number") {
-            return <div style={{ color : "gray" }}>{this.getPriceLevelText(priceLevel)}</div>
-        }
-        const dollarSigns = [];
-        for (let i=0; i<priceLevel; ++i) {
-            dollarSigns.push(<i key={i} className="fas fa-dollar-sign"></i>);
-        }
-        return (
-            <div>
-                {dollarSigns}
-                &nbsp;
-                {this.getPriceLevelText(priceLevel)}
-            </div>
-        );
-    }
-
-    /** @param {import("../maps").NearbySearchItem} item */
-    renderOpenNow (item) {
-        if (item.opening_hours === undefined) {
-            return <div style={{ color : "gray" }}>No known opening hours</div>;
-        }
-        return item.opening_hours.open_now ?
-            <div style={{ color : "green" }}>Open</div> :
-            <div style={{ color : "red" }}>
-                {
-                    item.permanently_closed ?
-                        "Permanantly Closed =(" :
-                        "Closed"
-                }
-            </div>
-    }
-
-    /** @param {import("../maps").NearbySearchItem} item */
-    renderPhoto (item) {
-        const photo = (
-            item.photos === undefined || item.photos.length == 0 ?
-            {
-                getUrl : () => "/no-image.png",
-                width : 1024,
-                height : 768,
-            } :
-            item.photos[0]
-        );
-
-        return <img className="card-img-top" src={photo.getUrl()} height={320}/>
-    }
-    /** @param {Item} item */
-    renderMatchedAt (item) {
-        const match = this.props.matches.find(
-            (m) => m.placeId === item.place_id
-        );
-        if (match === undefined) {
-            return <div>&nbsp;</div>;
-        } else {
-            return (
-                <div>
-                    <small>
-                        You matched at {moment(match.matchedAt).format("YYYY MMM DD, hh:mm A")}
-                    </small>
-                </div>
-            );
-        }
-    }
-
-    /**
-        @param {Item} item
-        @param {() => JSX.Element} renderActions
-    */
-    renderItem (item, renderActions) {
-        return (
-            <div className="card">
-                {this.renderPhoto(item)}
-                <div className="card-body">
-                    <h5 className="card-title">
-                        {item.name}
-                    </h5>
-                    <small>
-                        <img src={item.icon} width={16} height={16}/>{item.vicinity}
-                    </small>
-                    {this.renderOpenNow(item)}
-                    {this.renderRating(item.rating)}
-                    {this.renderPriceLevel(item.price_level)}
-                    {this.renderMatchedAt(item)}
-                    {renderActions()}
-                </div>
-            </div>
-        );
-    }
     renderEndOfNearbyItems () {
         const nearbySkipped = (this.state.nearbySkipped == undefined) ?
             [] :
@@ -405,88 +240,91 @@ class Map extends Component {
             return this.renderEndOfNearbyItems();
         }
         const item = this.state.nearby[0];
-        return this.renderItem(item, () => {
-            const match = this.props.matches.find(
-                (m) => m.placeId === item.place_id
-            );
-            return (
-                <div>
-                    <button
-                        type="button"
-                        className="btn btn-outline-warning btn-lg float-left"
-                        style={{ width : "75px" }}
-                        onClick={() => {
-                            const nearby = (this.state.nearby == undefined) ?
-                                [] :
-                                this.state.nearby;
-                            const nearbySkipped = (this.state.nearbySkipped == undefined) ?
-                                [] :
-                                this.state.nearbySkipped;
-                            if (nearbySkipped == undefined || nearbySkipped.length == 0) {
-                                return;
-                            }
-                            this.setState({
-                                nearby : [nearbySkipped[nearbySkipped.length-1], ...nearby],
-                                nearbySkipped : nearbySkipped.slice(0, nearbySkipped.length-1),
-                            });
-                        }}
-                        disabled={
-                            this.state.nearbySkipped == undefined ||
-                            this.state.nearbySkipped.length == 0
+        const match = this.props.matches.find(
+            (m) => m.placeId === item.place_id
+        );
+        return (
+            <PlaceCard item={item} matches={this.props.matches}>
+                <button
+                    type="button"
+                    className="btn btn-outline-warning btn-lg float-left"
+                    style={{ width : "75px" }}
+                    onClick={() => {
+                        const nearby = (this.state.nearby == undefined) ?
+                            [] :
+                            this.state.nearby;
+                        const nearbySkipped = (this.state.nearbySkipped == undefined) ?
+                            [] :
+                            this.state.nearbySkipped;
+                        if (nearbySkipped == undefined || nearbySkipped.length == 0) {
+                            return;
                         }
-                    >
-                        <i className="fas fa-undo"></i>
-                    </button>
+                        this.setState({
+                            nearby : [nearbySkipped[nearbySkipped.length-1], ...nearby],
+                            nearbySkipped : nearbySkipped.slice(0, nearbySkipped.length-1),
+                        });
+                    }}
+                    disabled={
+                        this.state.nearbySkipped == undefined ||
+                        this.state.nearbySkipped.length == 0
+                    }
+                >
+                    <i className="fas fa-undo"></i>
+                </button>
+                <button
+                    type="button"
+                    className="btn btn-outline-danger btn-lg float-left"
+                    style={{ width : "75px" }}
+                    onClick={() => {
+                        const nearby = this.state.nearby;
+                        if (nearby == undefined) {
+                            return;
+                        }
+                        const nearbySkipped = (this.state.nearbySkipped == undefined) ?
+                            [] :
+                            this.state.nearbySkipped;
+                        this.setState({
+                            nearby : nearby.slice(1),
+                            nearbySkipped : [...nearbySkipped, nearby[0]],
+                        });
+                    }}
+                >
+                    <i className="fas fa-times"></i>
+                </button>
+                {
+                    match === undefined ?
                     <button
                         type="button"
-                        className="btn btn-outline-danger btn-lg float-left"
+                        className="btn btn-outline-success btn-lg float-right"
                         style={{ width : "75px" }}
                         onClick={() => {
-                            const nearby = this.state.nearby;
-                            if (nearby == undefined) {
-                                return;
-                            }
-                            const nearbySkipped = (this.state.nearbySkipped == undefined) ?
-                                [] :
-                                this.state.nearbySkipped;
-                            this.setState({
-                                nearby : nearby.slice(1),
-                                nearbySkipped : [...nearbySkipped, nearby[0]],
+                            this.props.onMatch({
+                                matchedAt : new Date(),
+                                placeId : item.place_id,
+                                name : item.name,
+                                rating : item.rating,
+                                priceLevel : item.price_level,
+                                vicinity : item.vicinity,
                             });
                         }}
                     >
-                        <i className="fas fa-times"></i>
+                        <i className="fas fa-heart"></i>
+                    </button> :
+                    <button
+                        type="button"
+                        className="btn btn-outline-info btn-lg float-right"
+                        style={{ width : "75px" }}
+                        onClick={() => {
+                            this.props.onMatchSelected({
+                                placeId : item.place_id,
+                            });
+                        }}
+                    >
+                        <i className="fas fa-directions"></i>
                     </button>
-                    {
-                        match === undefined ?
-                        <button
-                            type="button"
-                            className="btn btn-outline-success btn-lg float-right"
-                            style={{ width : "75px" }}
-                            onClick={() => {
-                                this.props.onMatch({
-                                    placeId : item.place_id,
-                                });
-                            }}
-                        >
-                            <i className="fas fa-heart"></i>
-                        </button> :
-                        <button
-                            type="button"
-                            className="btn btn-outline-info btn-lg float-right"
-                            style={{ width : "75px" }}
-                            onClick={() => {
-                                this.props.onMatchSelected({
-                                    placeId : item.place_id,
-                                });
-                            }}
-                        >
-                            <i className="fas fa-directions"></i>
-                        </button>
-                    }
-                </div>
-            )
-        });
+                }
+            </PlaceCard>
+        )
     }
 
     renderNearbyMarkers () {
@@ -521,25 +359,23 @@ class Map extends Component {
         if (this.state.currentMatchItem === undefined) {
             return null;
         }
-        return this.renderItem(this.state.currentMatchItem, () => {
-            return (
-                <div>
-                    <button
-                        type="button"
-                        className="btn btn-outline-secondary btn-lg float-left"
-                        style={{ width : "75px" }}
-                        onClick={() => {
-                            this.setState({
-                                currentMatchItem : undefined,
-                                directions : undefined,
-                            });
-                        }}
-                    >
-                        <i className="fas fa-arrow-left"></i>
-                    </button>
-                </div>
-            );
-        });
+        return (
+            <PlaceCard item={this.state.currentMatchItem} matches={this.props.matches}>
+                <button
+                    type="button"
+                    className="btn btn-outline-secondary btn-lg float-left"
+                    style={{ width : "75px" }}
+                    onClick={() => {
+                        this.setState({
+                            currentMatchItem : undefined,
+                            directions : undefined,
+                        });
+                    }}
+                >
+                    <i className="fas fa-arrow-left"></i>
+                </button>
+            </PlaceCard>
+        );
     }
     renderTopItemOrCurrentMatch () {
         if (this.state.currentMatchItem === undefined) {
@@ -623,161 +459,5 @@ class Map extends Component {
         );
     }
 }
-
-/*const Map2 = compose(
-    withProps({
-        googleMapURL: 'https://maps.googleapis.com/maps/api/js?key=' + API_KEY + '&v=3.exp&libraries=geometry,drawing,places',
-        loadingElement: <div style={{ height: '100%' }} />,
-        containerElement: <div style={{ height: '400px' }} />,
-        mapElement: <div style={{ height: '100%' }} />
-    }),
-    lifecycle({
-        componentWillMount () {
-            this.setState({
-                center: {
-                    lat: 41.9,
-                    lng: -87.624
-                },
-                places: [],
-                directions: [],
-                /** @param {GoogleMap|undefined} ref * /
-                onMapMounted: (ref) => {
-                    if (ref == undefined) {
-                        return;
-                    }
-                    const state = store.getState().app;
-
-                    this.setState(
-                        {
-                            ...this.state,
-                            center: {
-                                lat: state.coordinates.latitude,
-                                lng: state.coordinates.longitude
-                            }
-                        }
-                    );
-
-                    const service = new google.maps.places.PlacesService(refs.map.context.__SECRET_MAP_DO_NOT_USE_OR_YOU_WILL_BE_FIRED);
-
-                    const request = {
-                        location: new google.maps.LatLng(state.coordinates.latitude, state.coordinates.longitude),
-                        radius: ('' + state.distance),
-                        type: ['restaurant']
-                    };
-
-                    service.nearbySearch(request, (result, status) => {
-                        if (status === google.maps.places.PlacesServiceStatus.OK) {
-                            this.setState(
-                                {
-                                    ...this.state,
-                                    places: result
-                                }
-                            );
-                        }
-                    });
-
-                    store.subscribe(
-                        () => {
-
-                            const updatedState = store.getState().app;
-
-                            if (updatedState.queryMode === 'lookup') {
-
-                                this.setState(
-                                    {
-                                        ...this.state,
-                                        center: {
-                                            lat: updatedState.coordinates.latitude,
-                                            lng: updatedState.coordinates.longitude
-                                        }
-                                    }
-                                );
-
-                                const updatedRequest = {
-                                    location: new google.maps.LatLng(updatedState.coordinates.latitude, updatedState.coordinates.longitude),
-                                    radius: ('' + updatedState.distance),
-                                    type: ['restaurant']
-                                };
-
-                                service.nearbySearch(updatedRequest, (result, status) => {
-
-                                    if (status === google.maps.places.PlacesServiceStatus.OK) {
-                                        this.setState(
-                                            {
-                                                ...this.state,
-                                                places: result
-                                            }
-                                        );
-                                    }
-                                    else {
-                                        this.setState(
-                                            {
-                                                ...this.state,
-                                                places: []
-                                            }
-                                        );
-                                    }
-                                });
-                            }
-                        }
-                    );
-                },
-                onDirectionRender: destination => {
-
-                    if (destination && destination.destination && destination.destination !== -1) {
-
-                        const DirectionsService = new google.maps.DirectionsService();
-                        var travel_mode = google.maps.TravelMode.WALKING;
-
-                        if (destination.travelMode === 'driving') {
-                            travel_mode = google.maps.TravelMode.DRIVING;
-                        }
-                        else if (destination.travelMode === 'transit') {
-                            travel_mode = google.maps.TravelMode.TRANSIT;
-                        }
-
-                        DirectionsService.route({
-                                origin: new google.maps.LatLng(this.state.center.lat, this.state.center.lng),
-                                destination: destination.destination,
-                                travelMode: travel_mode,
-                            }, (result, status) => {
-                            if (status === google.maps.DirectionsStatus.OK) {
-                                this.setState({
-                                    directions: result,
-                                });
-                            } else {
-                                //console.error('Cannot fetch direction(s)');
-                            }
-                        });
-                    }
-                }
-            });
-        }
-    }),
-    withScriptjs,
-    withGoogleMap
-)((props) => {
-    return (
-        <GoogleMap
-            ref={props.onMapMounted}
-            defaultZoom={ 12 }
-            center={ props.center }
-            { ...props.getMapDetails({
-                restaurants: props.places,
-                direction: props.directions
-            }) }
-            { ...props.onDirectionRender(props.destination) }
-        >
-            {
-                props.places && props.places.map(
-                    (place, i) => <Marker key={ i } position={ { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() } } />
-                )
-            }
-
-            { props.directions && <DirectionsRenderer directions={props.directions} />}
-        </GoogleMap>
-    );
-});
-*/
 
 export default Map;

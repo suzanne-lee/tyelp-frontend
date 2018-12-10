@@ -4,7 +4,7 @@ import {Redirect} from "react-router-dom";
 import { BrowserRouter, Switch, Route, Link, withRouter } from "react-router-dom";
 import Login from "./components/login";
 import Register from "./components/register";
-import Stories from "./components/stories";
+import Matches from "./components/matches";
 import Accepted from "./components/accepted";
 import Unaccepted from "./components/unaccepted";
 import store from "./store";
@@ -78,10 +78,10 @@ class App extends Component {
     renderLoggedInRoutes () {
         return (
             <Switch>
-                <Route path={path.nearby} component={ AsyncQuery } />
-                <Route path={path.match} component={ Stories } />
-                <Route path='/accepted' component={ Accepted } />
-                <Route path='/unaccepted' component={ Unaccepted } />
+                <Route path={path.nearby} component={AsyncQuery} />
+                <Route path={path.match} component={Matches} />
+                <Route path='/accepted' component={Accepted} />
+                <Route path='/unaccepted' component={Unaccepted} />
                 <Route path={"/"} component={() => <Redirect to={path.nearby}/>} />
             </Switch>
         );
@@ -104,9 +104,8 @@ class App extends Component {
                                 }
 
                             </h5>
-
                         </Link>
-                        <div className="collapse navbar-collapse justify-content-between">
+                        <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
                             {loggedIn ? <LoggedInNavBar onLogOut={this.logOut}/> : <LoggedOutNavBar/>}
                         </div>
                     </nav>

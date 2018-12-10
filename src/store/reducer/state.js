@@ -3,7 +3,7 @@
     @property {string} placeId - The identifier of the place
     @property {string} name - The human-readable name of the place
     @property {number} rating - [1.0, 5.0] based on aggregated user reviews
-    @property {0|1|2|3|4} price_level - 0 is free, 4 is very expensive
+    @property {0|1|2|3|4} priceLevel - 0 is free, 4 is very expensive
     @property {string} vicinity - The simplified address of the place
 
     @typedef {Place & { matchedAt : Date }} Match

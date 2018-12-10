@@ -11,6 +11,8 @@ export const logOutReducer = (state = initialState, action) => {
             return {
                 ...state,
                 me : undefined,
+                errorMessages : {},
+                currentMatch : undefined,
             };
         }
         default: {
