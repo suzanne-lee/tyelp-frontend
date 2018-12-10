@@ -229,7 +229,7 @@ class Query extends Component {
 				<div className="row">
 					<div className="query-container">
 
-						<form className="form" onSubmit={ this.submit }>
+						{/*<form className="form" onSubmit={ this.submit }>
 							<label> Distance (m) </label>
 							<input type="text" onChange={ (event) => this.handleInput(event) } />
 							<button type="button" className="btn btn-success">LOOK UP</button>
@@ -257,7 +257,7 @@ class Query extends Component {
 							<div className="col-1">
 								<button type="button" className="btn btn-outline-primary" onClick={ this.next }> NEXT </button>
 							</div>
-						</div>
+						</div>*/}
 						<Map getMapDetails={ this.getMapDetails } center={this.props.latLng}/>
 					</div>
 				</div>

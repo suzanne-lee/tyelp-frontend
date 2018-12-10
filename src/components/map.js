@@ -307,88 +307,82 @@ class Map extends Component {
         const photo = (
             item.photos === undefined || item.photos.length == 0 ?
             {
-                getUrl : () => "/no-image.png"
+                getUrl : () => "/no-image.png",
+                width : 1024,
+                height : 768,
             } :
             item.photos[Math.floor(Math.random() * item.photos.length)]
         );
 
-        return <img className="card-img-top" src={photo.getUrl()}/>
+        return <img className="card-img-top" src={photo.getUrl()} height={320}/>
     }
 
     /** @param {import("../maps").NearbySearchItem} item */
     renderItem (item) {
         return (
-            <div className="container">
-                <div className="row">
-                    <div className="col-sm">&nbsp;</div>
-                    <div className="col-sm">
-                        <div className="card">
-                            {this.renderPhoto(item)}
-                            <div className="card-body">
-                                <h5 className="card-title">
-                                    {item.name}
-                                </h5>
-                                <small>
-                                    <img src={item.icon} width={16} height={16}/>{item.vicinity}
-                                </small>
-                                {this.renderOpenNow(item)}
-                                {this.renderRating(item.rating)}
-                                {this.renderPriceLevel(item.price_level)}
-                                <div>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-warning btn-lg float-left"
-                                        style={{ width : "75px" }}
-                                        onClick={() => {
-                                            const nearby = (this.state.nearby == undefined) ?
-                                                [] :
-                                                this.state.nearby;
-                                            const nearbySkipped = (this.state.nearbySkipped == undefined) ?
-                                                [] :
-                                                this.state.nearbySkipped;
-                                            if (nearbySkipped == undefined || nearbySkipped.length == 0) {
-                                                return;
-                                            }
-                                            this.setState({
-                                                nearby : [nearbySkipped[nearbySkipped.length-1], ...nearby],
-                                                nearbySkipped : nearbySkipped.slice(0, nearbySkipped.length-1),
-                                            });
-                                        }}
-                                        disabled={
-                                            this.state.nearbySkipped == undefined ||
-                                            this.state.nearbySkipped.length == 0
-                                        }
-                                    >
-                                        <i className="fas fa-undo"></i>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-danger btn-lg float-left"
-                                        style={{ width : "75px" }}
-                                        onClick={() => {
-                                            const nearby = this.state.nearby;
-                                            if (nearby == undefined) {
-                                                return;
-                                            }
-                                            const nearbySkipped = (this.state.nearbySkipped == undefined) ?
-                                                [] :
-                                                this.state.nearbySkipped;
-                                            this.setState({
-                                                nearby : nearby.slice(1),
-                                                nearbySkipped : [...nearbySkipped, nearby[0]],
-                                            });
-                                        }}
-                                    >
-                                        <i className="fas fa-times"></i>
-                                    </button>
-                                    <button type="button" className="btn btn-outline-success btn-lg float-right" style={{ width : "75px" }}>
-                                        <i className="fas fa-heart"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+            <div className="card">
+                {this.renderPhoto(item)}
+                <div className="card-body">
+                    <h5 className="card-title">
+                        {item.name}
+                    </h5>
+                    <small>
+                        <img src={item.icon} width={16} height={16}/>{item.vicinity}
+                    </small>
+                    {this.renderOpenNow(item)}
+                    {this.renderRating(item.rating)}
+                    {this.renderPriceLevel(item.price_level)}
+                    <div>
+                        <button
+                            type="button"
+                            className="btn btn-outline-warning btn-lg float-left"
+                            style={{ width : "75px" }}
+                            onClick={() => {
+                                const nearby = (this.state.nearby == undefined) ?
+                                    [] :
+                                    this.state.nearby;
+                                const nearbySkipped = (this.state.nearbySkipped == undefined) ?
+                                    [] :
+                                    this.state.nearbySkipped;
+                                if (nearbySkipped == undefined || nearbySkipped.length == 0) {
+                                    return;
+                                }
+                                this.setState({
+                                    nearby : [nearbySkipped[nearbySkipped.length-1], ...nearby],
+                                    nearbySkipped : nearbySkipped.slice(0, nearbySkipped.length-1),
+                                });
+                            }}
+                            disabled={
+                                this.state.nearbySkipped == undefined ||
+                                this.state.nearbySkipped.length == 0
+                            }
+                        >
+                            <i className="fas fa-undo"></i>
+                        </button>
+                        <button
+                            type="button"
+                            className="btn btn-outline-danger btn-lg float-left"
+                            style={{ width : "75px" }}
+                            onClick={() => {
+                                const nearby = this.state.nearby;
+                                if (nearby == undefined) {
+                                    return;
+                                }
+                                const nearbySkipped = (this.state.nearbySkipped == undefined) ?
+                                    [] :
+                                    this.state.nearbySkipped;
+                                this.setState({
+                                    nearby : nearby.slice(1),
+                                    nearbySkipped : [...nearbySkipped, nearby[0]],
+                                });
+                            }}
+                        >
+                            <i className="fas fa-times"></i>
+                        </button>
+                        <button type="button" className="btn btn-outline-success btn-lg float-right" style={{ width : "75px" }}>
+                            <i className="fas fa-heart"></i>
+                        </button>
                     </div>
-                    <div className="col-sm">&nbsp;</div>
                 </div>
             </div>
         );
@@ -437,18 +431,24 @@ class Map extends Component {
             return null;
         }
         return (
-            <div>
-                {this.renderTopItem()}
-                <MyMap
-                    loadingElement={<div style={{ height: '100%' }} />}
-                    containerElement={<div style={{ height: '400px' }} />}
-                    mapElement={<div style={{ height: '100%' }} />}
-                    defaultZoom={ 12 }
-                    center={this.props.center}
-                    ref={this.onMapRef}
-                >
-                    {this.renderNearbyMarkers()}
-                </MyMap>
+            <div className="container">
+                <div className="row">
+                    <div className="col-sm">
+                    {this.renderTopItem()}
+                    </div>
+                    <div className="col-sm">
+                        <MyMap
+                            loadingElement={<div style={{ height: '100%' }} />}
+                            containerElement={<div style={{ height: '100%' }} />}
+                            mapElement={<div style={{ height: '100%' }} />}
+                            defaultZoom={ 12 }
+                            center={this.props.center}
+                            ref={this.onMapRef}
+                        >
+                            {this.renderNearbyMarkers()}
+                        </MyMap>
+                    </div>
+                </div>
             </div>
         );
     }
