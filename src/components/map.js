@@ -216,6 +216,9 @@ class Map extends Component {
         @returns {JSX.Element}
     */
     renderRating (rating) {
+        if (typeof rating !== "number") {
+            return <div style={{ color : "gray" }}>Unknown rating</div>
+        }
         if (rating < 0) {
             rating = 0;
         }
@@ -267,7 +270,7 @@ class Map extends Component {
                 return "Very Expensive";
             }
             default: {
-                return "Unknown";
+                return "Unknown Cost";
             }
         }
     }
@@ -276,6 +279,9 @@ class Map extends Component {
         @returns {JSX.Element}
     */
     renderPriceLevel (priceLevel) {
+        if (typeof priceLevel !== "number") {
+            return <div style={{ color : "gray" }}>{this.getPriceLevelText(priceLevel)}</div>
+        }
         const dollarSigns = [];
         for (let i=0; i<priceLevel; ++i) {
             dollarSigns.push(<i key={i} className="fas fa-dollar-sign"></i>);
@@ -390,14 +396,48 @@ class Map extends Component {
             </div>
         );
     }
+    renderEndOfNearbyItems () {
+        return (
+            <div className="card">
+                return <img className="card-img-top" src={"/the-end.jpg"} height={320}/>
+                <div className="card-body">
+                    <h5 className="card-title">
+                        The End
+                    </h5>
+                    You've reached the end. Would you like to start over?
+                    <div>
+                        <button
+                            type="button"
+                            className="btn btn-outline-warning btn-lg float-left"
+                            style={{ width : "75px" }}
+                            onClick={() => {
+                                const nearbySkipped = (this.state.nearbySkipped == undefined) ?
+                                    [] :
+                                    this.state.nearbySkipped;
+                                this.setState({
+                                    nearby : nearbySkipped,
+                                    nearbySkipped : [],
+                                });
+                            }}
+                            disabled={
+                                this.state.nearbySkipped == undefined ||
+                                this.state.nearbySkipped.length == 0
+                            }
+                        >
+                            <i className="fas fa-undo"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
     renderTopItem () {
         if (this.state.nearby == undefined) {
             return null;
         }
         if (this.state.nearby.length == 0) {
-            return null;
+            return this.renderEndOfNearbyItems();
         }
-        console.log(this.state);
         return this.renderItem(this.state.nearby[0]);
     }
 
@@ -437,7 +477,7 @@ class Map extends Component {
             <div className="container">
                 <div className="row">
                     <div className="col-sm">
-                    {this.renderTopItem()}
+                        {this.renderTopItem()}
                     </div>
                     <div className="col-sm">
                         <MyMap
