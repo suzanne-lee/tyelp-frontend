@@ -19,10 +19,6 @@ const MyMap = withGoogleMap(props => (
         import("react-google-maps").GoogleMapProps &
         {
             center : import("../store").LatLng,
-            getMapDetails : ({
-                restaurants : [],
-                direction : [],
-            }) => void,
             onMatch : (args : import("../store").Match) => void,
             onMatchSelected : (args : {
                 placeId : string,
@@ -190,12 +186,12 @@ class Map extends Component {
     }
 
     renderEndOfNearbyItems () {
-        const nearbySkipped = (this.state.nearbySkipped == undefined) ?
+        const nearbySkipped = (this.state.nearbySkipped === undefined) ?
             [] :
             this.state.nearbySkipped;
         return (
             <div className="card">
-                <img className="card-img-top" src={"/the-end.jpg"} height={320}/>
+                <img className="card-img-top" src={"/the-end.jpg"} height={320} alt="The End"/>
                 <div className="card-body">
                     <h5 className="card-title">
                         The End
@@ -212,7 +208,7 @@ class Map extends Component {
                             className="btn btn-outline-warning btn-lg float-left"
                             style={{ width : "75px" }}
                             onClick={() => {
-                                const nearbySkipped = (this.state.nearbySkipped == undefined) ?
+                                const nearbySkipped = (this.state.nearbySkipped === undefined) ?
                                     [] :
                                     this.state.nearbySkipped;
                                 this.setState({
@@ -221,8 +217,8 @@ class Map extends Component {
                                 });
                             }}
                             disabled={
-                                this.state.nearbySkipped == undefined ||
-                                this.state.nearbySkipped.length == 0
+                                this.state.nearbySkipped === undefined ||
+                                this.state.nearbySkipped.length === 0
                             }
                         >
                             <i className="fas fa-undo"></i>
@@ -233,10 +229,10 @@ class Map extends Component {
         );
     }
     renderTopItem () {
-        if (this.state.nearby == undefined) {
+        if (this.state.nearby === undefined) {
             return null;
         }
-        if (this.state.nearby.length == 0) {
+        if (this.state.nearby.length === 0) {
             return this.renderEndOfNearbyItems();
         }
         const item = this.state.nearby[0];
@@ -250,13 +246,13 @@ class Map extends Component {
                     className="btn btn-outline-warning btn-lg float-left"
                     style={{ width : "75px" }}
                     onClick={() => {
-                        const nearby = (this.state.nearby == undefined) ?
+                        const nearby = (this.state.nearby === undefined) ?
                             [] :
                             this.state.nearby;
-                        const nearbySkipped = (this.state.nearbySkipped == undefined) ?
+                        const nearbySkipped = (this.state.nearbySkipped === undefined) ?
                             [] :
                             this.state.nearbySkipped;
-                        if (nearbySkipped == undefined || nearbySkipped.length == 0) {
+                        if (nearbySkipped === undefined || nearbySkipped.length === 0) {
                             return;
                         }
                         this.setState({
@@ -265,8 +261,8 @@ class Map extends Component {
                         });
                     }}
                     disabled={
-                        this.state.nearbySkipped == undefined ||
-                        this.state.nearbySkipped.length == 0
+                        this.state.nearbySkipped === undefined ||
+                        this.state.nearbySkipped.length === 0
                     }
                 >
                     <i className="fas fa-undo"></i>
@@ -277,10 +273,10 @@ class Map extends Component {
                     style={{ width : "75px" }}
                     onClick={() => {
                         const nearby = this.state.nearby;
-                        if (nearby == undefined) {
+                        if (nearby === undefined) {
                             return;
                         }
-                        const nearbySkipped = (this.state.nearbySkipped == undefined) ?
+                        const nearbySkipped = (this.state.nearbySkipped === undefined) ?
                             [] :
                             this.state.nearbySkipped;
                         this.setState({
@@ -328,7 +324,7 @@ class Map extends Component {
     }
 
     renderNearbyMarkers () {
-        if (this.state.googleApi == undefined) {
+        if (this.state.googleApi === undefined) {
             return null;
         }
         if (this.state.nearby === undefined) {
@@ -431,7 +427,7 @@ class Map extends Component {
         };
     }
     render () {
-        if (this.state.googleApi == undefined) {
+        if (this.state.googleApi === undefined) {
             return null;
         }
         if (this.map !== undefined && this.state.currentMatchItem === undefined) {

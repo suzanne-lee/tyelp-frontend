@@ -1,12 +1,10 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import {connect} from "react-redux";
 import {Redirect} from "react-router-dom";
-import { BrowserRouter, Switch, Route, Link, withRouter } from "react-router-dom";
-import Login from "./components/login";
+import {BrowserRouter, Switch, Route, Link, withRouter} from "react-router-dom";
+import LogIn from "./components/log-in";
 import Register from "./components/register";
 import Matches from "./components/matches";
-import Accepted from "./components/accepted";
-import Unaccepted from "./components/unaccepted";
 import store from "./store";
 import async from "./hoc/async";
 import * as actions from "./store/action";
@@ -15,7 +13,7 @@ import * as path from "./path";
 
 const AsyncQuery = async(
     () => {
-        return import("./components/query");
+        return import("./components/nearby");
     }
 );
 
@@ -23,7 +21,7 @@ const LoggedOutNavBar = withRouter(props => {
     const pathname = props.location.pathname;
     /** @param {string} desired */
     const setActive = (desired) => {
-        return pathname == desired ? "active" : ""
+        return pathname === desired ? "active" : ""
     };
     return <ul className="navbar-nav ml-auto">
         <li className={`nav-item ${setActive(path.logIn)}`}>
@@ -38,7 +36,7 @@ const LoggedInNavBar = withRouter(props => {
     const pathname = props.location.pathname;
     /** @param {string} desired */
     const setActive = (desired) => {
-        return pathname == desired ? "active" : ""
+        return pathname === desired ? "active" : ""
     };
     return <ul className="navbar-nav ml-auto">
         <li className={`nav-item ${setActive(path.nearby)}`}>
@@ -48,7 +46,7 @@ const LoggedInNavBar = withRouter(props => {
             <Link className="nav-link" to={path.match}>My Matches</Link>
         </li>
         <li className={`nav-item`}>
-            <a className="nav-link" href="#" onClick={
+            <a className="nav-link" href="/#" onClick={
                 props.onLogOut
             }>Log Out</a>
         </li>
@@ -69,7 +67,7 @@ class App extends Component {
     renderLoggedOutRoutes () {
         return (
             <Switch>
-                <Route path={path.logIn} exact component={Login} />
+                <Route path={path.logIn} exact component={LogIn} />
                 <Route path={path.register} exact component={Register} />
                 <Route path={"/"} component={() => <Redirect to={path.logIn}/>} />
             </Switch>
@@ -80,8 +78,6 @@ class App extends Component {
             <Switch>
                 <Route path={path.nearby} component={AsyncQuery} />
                 <Route path={path.match} component={Matches} />
-                <Route path='/accepted' component={Accepted} />
-                <Route path='/unaccepted' component={Unaccepted} />
                 <Route path={"/"} component={() => <Redirect to={path.nearby}/>} />
             </Switch>
         );

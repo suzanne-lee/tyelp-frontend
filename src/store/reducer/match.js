@@ -16,6 +16,10 @@ export const matchReducer = (state = initialState, action) => {
                     matches : [...state.me.matches, action.match],
                 },
                 currentMatch : action.match,
+                errorMessages : {
+                    ...state.errorMessages,
+                    match : undefined,
+                },
             };
         }
         case "MATCH_FAIL": {

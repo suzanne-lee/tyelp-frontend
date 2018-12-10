@@ -1,4 +1,4 @@
-import React, {Component, CSSProperties} from "react";
+import React, {Component} from "react";
 import * as moment from "moment";
 import {Rating} from "./rating";
 import {PriceLevel} from "./price-level";
@@ -50,7 +50,7 @@ export class PlaceCard extends Component {
             return null;
         }
         const photo = (
-            item.photos === undefined || item.photos.length == 0 ?
+            item.photos === undefined || item.photos.length === 0 ?
             {
                 getUrl : () => "/no-image.png",
                 width : 1024,
@@ -59,7 +59,7 @@ export class PlaceCard extends Component {
             item.photos[0]
         );
 
-        return <img className="card-img-top" src={photo.getUrl()} height={320}/>
+        return <img className="card-img-top" src={photo.getUrl()} height={320} alt={item.name}/>
     }
     renderMatchedAt () {
         const item = this.props.item;
@@ -80,7 +80,7 @@ export class PlaceCard extends Component {
     }
     render () {
         const item = this.props.item;
-        /** @type {CSSProperties} */
+        /** @type {import("react").CSSProperties} */
         const singleLineStyle = (this.props.singleLine === true) ?
             {
                 overflow : "hidden",
@@ -98,7 +98,7 @@ export class PlaceCard extends Component {
                     <small style={singleLineStyle}>
                         {
                             typeof item.icon === "string" ?
-                            <img src={item.icon} width={16} height={16}/> :
+                            <img src={item.icon} width={16} height={16} alt="Icon"/> :
                             null
                         }
                         {item.vicinity}

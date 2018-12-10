@@ -25,7 +25,7 @@ class Matches extends Component {
         this.state = {};
     }
     render() {
-        if (this.props.me == undefined) {
+        if (this.props.me === undefined) {
             return null;
         }
         const matches = this.props.me.matches;

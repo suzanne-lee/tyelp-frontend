@@ -9,6 +9,10 @@ export const meReducer = (state = initialState, action) => {
             return {
                 ...state,
                 me : action.me,
+                errorMessages : {
+                    ...state.errorMessages,
+                    me : undefined,
+                },
             };
         }
         case "ME_FAIL": {

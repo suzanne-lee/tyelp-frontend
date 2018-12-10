@@ -11,6 +11,10 @@ export const logInReducer = (state = initialState, action) => {
             return {
                 ...state,
                 me : action.me,
+                errorMessages : {
+                    ...state.errorMessages,
+                    logIn : undefined,
+                },
             };
         }
         case "LOG_IN_FAIL": {

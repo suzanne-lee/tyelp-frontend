@@ -11,6 +11,10 @@ export const registerReducer = (state = initialState, action) => {
             return {
                 ...state,
                 me : action.me,
+                errorMessages : {
+                    ...state.errorMessages,
+                    register : undefined,
+                },
             };
         }
         case "REGISTER_FAIL": {
