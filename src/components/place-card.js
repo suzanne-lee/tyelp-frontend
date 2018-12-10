@@ -95,14 +95,16 @@ export class PlaceCard extends Component {
                     <h5 className="card-title" style={singleLineStyle}>
                         {item.name}
                     </h5>
-                    <small style={singleLineStyle}>
-                        {
-                            typeof item.icon === "string" ?
-                            <img src={item.icon} width={16} height={16} alt="Icon"/> :
-                            null
-                        }
-                        {item.vicinity}
-                    </small>
+                    <div style={singleLineStyle}>
+                        <small>
+                            {
+                                typeof item.icon === "string" ?
+                                <img src={item.icon} width={16} height={16} alt="Icon"/> :
+                                null
+                            }
+                            {item.vicinity}
+                        </small>
+                    </div>
                     {this.renderOpenNow()}
                     <Rating rating={item.rating}/>
                     <PriceLevel priceLevel={item.price_level}/>
