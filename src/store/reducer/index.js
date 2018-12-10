@@ -1,5 +1,5 @@
 import {initialState} from "./state";
-import {lngLatReducer} from "./lnglat";
+import {latLngReducer} from "./lat-lng";
 import {logInReducer} from "./log-in";
 import {logOutReducer} from "./log-out";
 import {matchReducer} from "./match";
@@ -7,7 +7,7 @@ import {meReducer} from "./me";
 import {registerReducer} from "./register";
 
 const reducers = [
-    lngLatReducer,
+    latLngReducer,
     logInReducer,
     logOutReducer,
     matchReducer,

@@ -12,7 +12,7 @@ import api from "./api";
 
 /**
     @param {import("./api").LogInArgs} args
-    @returns {import("../").ThunkCallback}
+    @returns {import("..").ThunkCallback}
 */
 export const LOG_IN_ACTION = (args) => {
     return (dispatch) => {

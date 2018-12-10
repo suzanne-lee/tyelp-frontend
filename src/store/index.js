@@ -31,6 +31,6 @@ export default store;
     @typedef {import("./reducer/state").Place} Place
     @typedef {import("./reducer/state").Match} Match
     @typedef {import("./reducer/state").Me} Me
-    @typedef {import("./reducer/state").LngLat} LngLat
+    @typedef {import("./reducer/state").LatLng} LatLng
     @typedef {import("./reducer/state").State} State
 */

@@ -4,7 +4,7 @@
     @typedef {import("./api").MeArgs} MeArgs
     @typedef {import("./api").RegisterArgs} RegisterArgs
 
-    @typedef {import("./lnglat").LngLatUpdateAction} LngLatUpdateAction
+    @typedef {import("./lat-lng").LatLngUpdateAction} LatLngUpdateAction
 
     @typedef {import("./log-in").LogInSuccessAction} LogInSuccessAction
     @typedef {import("./log-in").LogInFailAction} LogInFailAction
@@ -22,7 +22,7 @@
 
 
     @typedef {
-        LngLatUpdateAction|
+        LatLngUpdateAction|
         LogInSuccessAction|
         LogInFailAction|
         LogOutSuccessAction|

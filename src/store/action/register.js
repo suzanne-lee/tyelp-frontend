@@ -12,7 +12,7 @@ import api from "./api";
 
 /**
     @param {import("./api").RegisterArgs} args
-    @returns {import("../").ThunkCallback}
+    @returns {import("..").ThunkCallback}
 */
 export const REGISTER_ACTION = (args) => {
     return (dispatch) => {

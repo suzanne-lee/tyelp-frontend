@@ -12,7 +12,7 @@ import api from "./api";
 
 /**
     @param {import("./api").MeArgs} args
-    @returns {import("../").ThunkCallback}
+    @returns {import("..").ThunkCallback}
 */
 export const ME_ACTION = (args) => {
     return (dispatch) => {

@@ -6,8 +6,8 @@ import store from "./store";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import * as cookie from "js-cookie";
-import { ME_ACTION } from "./store/action";
-import { LNGLAT_UPDATE } from "./store/action/lnglat";
+import {ME_ACTION} from "./store/action";
+import {LAT_LNG_UPDATE} from "./store/action/lat-lng";
 
 function logInFromCookie () {
     const authenticationToken = cookie.get("authenticationToken");
@@ -18,29 +18,29 @@ function logInFromCookie () {
     }
 }
 function initGeoLocation () {
-    const lastLngLat = cookie.get("lastLngLat");
-    console.log("lastLngLat", lastLngLat);
-    if (lastLngLat === undefined) {
-        store.dispatch(LNGLAT_UPDATE({
-            //LngLat for Saint Laurent Montreal
+    const lastLatLng = cookie.get("lastLatLng");
+    console.log("lastLatLng", lastLatLng);
+    if (lastLatLng === undefined) {
+        store.dispatch(LAT_LNG_UPDATE({
+            //LatLng for Saint Laurent Montreal
             lng: -73.6995759,
             lat: 45.505724099999995,
         }));
     } else {
-        store.dispatch(LNGLAT_UPDATE(JSON.parse(lastLngLat)));
+        store.dispatch(LAT_LNG_UPDATE(JSON.parse(lastLatLng)));
     }
 
     if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition((position) => {
             console.log("currentPosition", position.coords);
-            store.dispatch(LNGLAT_UPDATE({
+            store.dispatch(LAT_LNG_UPDATE({
                 lng: position.coords.longitude,
                 lat: position.coords.latitude,
             }));
         });
         navigator.geolocation.watchPosition((position) => {
             console.log("updatedPosition", position.coords);
-            store.dispatch(LNGLAT_UPDATE({
+            store.dispatch(LAT_LNG_UPDATE({
                 lng: position.coords.longitude,
                 lat: position.coords.latitude,
             }));

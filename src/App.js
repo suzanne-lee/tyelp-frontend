@@ -1,20 +1,20 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {connect} from "react-redux";
-import { BrowserRouter, Switch, Route, Link } from 'react-router-dom';
-import Login from './components/login';
-import Register from './components/register';
-import Stories from './components/stories';
-import Accepted from './components/accepted';
-import Unaccepted from './components/unaccepted';
-import store from './store';
-import async from './hoc/async';
-import * as actions from './store/action';
-import './App.css';
+import { BrowserRouter, Switch, Route, Link } from "react-router-dom";
+import Login from "./components/login";
+import Register from "./components/register";
+import Stories from "./components/stories";
+import Accepted from "./components/accepted";
+import Unaccepted from "./components/unaccepted";
+import store from "./store";
+import async from "./hoc/async";
+import * as actions from "./store/action";
+import "./App.css";
 import * as path from "./path";
 
 const AsyncQuery = async(
     () => {
-        return import('./components/query');
+        return import("./components/query");
     }
 );
 

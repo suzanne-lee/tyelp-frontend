@@ -4,13 +4,13 @@ import * as cookie from "js-cookie";
 /**
     @type {import("./state").Reducer}
 */
-export const lngLatReducer = (state = initialState, action) => {
+export const latLngReducer = (state = initialState, action) => {
     switch (action.type) {
-        case "LNGLAT_UPDATE": {
-            cookie.set("lastLngLat", JSON.stringify(action.lngLat));
+        case "LAT_LNG_UPDATE": {
+            cookie.set("lastLatLng", JSON.stringify(action.latLng));
             return {
                 ...state,
-                lngLat : action.lngLat,
+                latLng : action.latLng,
             };
         }
         default: {

@@ -7,7 +7,7 @@ import Restaurant from './restaurant';
 import '../styles/query.css';
 
 /**
-    @typedef {{ lngLat : undefined|import("../store").LngLat }} QueryProps
+    @typedef {{ latLng : undefined|import("../store").LatLng }} QueryProps
     @typedef {{}} QueryState
 
     @extends {Component<QueryProps, QueryState>}
@@ -258,7 +258,7 @@ class Query extends Component {
 								<button type="button" className="btn btn-outline-primary" onClick={ this.next }> NEXT </button>
 							</div>
 						</div>
-						<Map getMapDetails={ this.getMapDetails } center={this.props.lngLat}/>
+						<Map getMapDetails={ this.getMapDetails } center={this.props.latLng}/>
 					</div>
 				</div>
 			</div>
@@ -273,7 +273,7 @@ class Query extends Component {
 */
 function mapStateToProps (state) {
     return {
-        lngLat: state.lngLat,
+        latLng: state.latLng,
     };
 };
 export default connect(mapStateToProps)(Query);

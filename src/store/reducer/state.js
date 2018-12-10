@@ -13,9 +13,9 @@
     @property {string} authenticationToken
     @property {Match[]} matches
 
-    @typedef LngLat
-    @property {number} lng
+    @typedef LatLng
     @property {number} lat
+    @property {number} lng
 
     @typedef {"lookup"} QueryMode
     - TODO Find out exactly what `queryMode` values there are
@@ -30,14 +30,14 @@
     @typedef State
     @property {Me|undefined} me
     @property {ErrorMessageCollection} errorMessages
-    @property {LngLat|undefined} lngLat
+    @property {LatLng|undefined} latLng
 */
 
 /** @type State */
 export const initialState = {
     me: undefined,
     errorMessages : {},
-    lngLat: undefined,
+    latLng: undefined,
 };
 
 /**

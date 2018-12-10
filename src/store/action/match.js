@@ -12,7 +12,7 @@ import api from "./api";
 
 /**
     @param {import("./api").MatchArgs} args
-    @returns {import("../").ThunkCallback}
+    @returns {import("..").ThunkCallback}
 */
 export const MATCH_ACTION = (args) => {
     return (dispatch) => {
