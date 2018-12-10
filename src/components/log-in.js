@@ -1,40 +1,42 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import {connect} from "react-redux";
-import {Link} from "react-router-dom";
 import store from "../store";
-import {REGISTER_ACTION} from "../store/action";
+import {LOG_IN_ACTION} from "../store/action";
 import * as path from "../path";
-// import '../styles/login.css';
+// import "../styles/login.css";
+import {Link} from "react-router-dom";
 
 /**
     @typedef {{
         me : undefined|import("../store").Me,
         errorMessages : import("../store").ErrorMessageCollection,
-    }} RegisterProps
-    @typedef {import("../store/action").RegisterArgs} RegisterState
+    }} LogInProps
+    @typedef {import("../store/action").LogInArgs} LogInState
 
-    @extends {Component<RegisterProps, RegisterState>}
+    @extends {Component<LogInProps, LogInState>}
 */
-class Register extends Component {
-    /** @param {RegisterProps} props */
-    constructor(props) {
+class LogIn extends Component {
+    /**
+        @param {LogInProps} props
+    */
+    constructor(props){
         super(props);
 
-        /** @type {RegisterState} */
+        /**
+            @type {LogInState}
+        */
         this.state = {
-            emailAddress: "",
-            password: "",
-            displayName: "",
+            emailAddress : "",
+            password : ""
         };
     }
 
-    register = () => {
+    logIn = () => {
         if (
             this.state.emailAddress !== "" &&
-            this.state.password !== "" &&
-            this.state.displayName !== ""
+            this.state.password !== ""
         ) {
-            store.dispatch(REGISTER_ACTION(this.state));
+            store.dispatch(LOG_IN_ACTION(this.state));
         }
     };
 
@@ -43,10 +45,10 @@ class Register extends Component {
             <div className="container">
                 <form className="card" onSubmit={(e) => {
                     e.preventDefault();
-                    this.register();
+                    this.logIn();
                 }}>
                     <div className="card-body">
-                        <h5 className="card-title">Register</h5>
+                        <h5 className="card-title">Log In</h5>
                         <div className="form-group">
                             <label>Email Address</label>
                             <input type="text" className="form-control" placeholder="Email Address" onChange={(e) => {
@@ -63,30 +65,22 @@ class Register extends Component {
                                 });
                             }}/>
                         </div>
-                        <div className="form-group">
-                            <label>Display Name</label>
-                            <input type="text" className="form-control" placeholder="Display Name" onChange={(e) => {
-                                this.setState({
-                                    displayName : e.target.value,
-                                });
-                            }}/>
-                        </div>
                         <div>
                             <small>
-                                Already have an account?
-                                Click <Link to={path.logIn}>here</Link> to log in!
+                                Don't have an account?
+                                Click <Link to={path.register}>here</Link> to register!
                             </small>
                         </div>
                         <button type="submit" className="btn btn-primary">
-                            Register
+                            Log In
                         </button>
                         <br/>
                         <br/>
                         {
-                            this.props.errorMessages.register === undefined ?
+                            this.props.errorMessages.logIn === undefined ?
                             null :
                             <div className="alert alert-danger" role="alert">
-                                {this.props.errorMessages.register}
+                                {this.props.errorMessages.logIn}
                             </div>
                         }
                     </div>
@@ -98,7 +92,7 @@ class Register extends Component {
 
 /**
     @param {import("../store").State} state
-    @returns {RegisterProps}
+    @returns {LogInProps}
 */
 function mapStateToProps (state) {
     return {
@@ -106,4 +100,4 @@ function mapStateToProps (state) {
         errorMessages : state.errorMessages,
     };
 };
-export default connect(mapStateToProps)(Register);
+export default connect(mapStateToProps)(LogIn);
