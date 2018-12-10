@@ -291,6 +291,9 @@ class Map extends Component {
 
     /** @param {import("../maps").NearbySearchItem} item */
     renderOpenNow (item) {
+        if (item.opening_hours === undefined) {
+            return null;
+        }
         return item.opening_hours.open_now ?
             <div style={{ color : "green" }}>Open</div> :
             <div style={{ color : "red" }}>

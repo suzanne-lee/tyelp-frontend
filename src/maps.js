@@ -47,7 +47,7 @@ const url = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(co
         icon: string,
         geometry: AddressGeometry,
         name: string,
-        opening_hours: OpeningHours,
+        opening_hours?: OpeningHours,
         photos?: PlacePhoto[],
         place_id: string,
         price_level : 0|1|2|3|4,
