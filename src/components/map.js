@@ -598,7 +598,7 @@ class Map extends Component {
         if (this.state.googleApi == undefined) {
             return null;
         }
-        if (this.map !== undefined) {
+        if (this.map !== undefined && this.state.currentMatchItem === undefined) {
             this.map.fitBounds(this.getNearbyBounds());
         }
         return (
