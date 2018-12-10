@@ -31,6 +31,7 @@
     @property {Me|undefined} me
     @property {ErrorMessageCollection} errorMessages
     @property {LatLng|undefined} latLng
+    @property {{ placeId : string }|undefined} currentMatch
 */
 
 /** @type State */
@@ -38,6 +39,7 @@ export const initialState = {
     me: undefined,
     errorMessages : {},
     latLng: undefined,
+    currentMatch : undefined,
 };
 
 /**

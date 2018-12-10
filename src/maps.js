@@ -8,14 +8,16 @@ const url = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(co
 
     }} SizeInstance
     @typedef {{
-        northeast: import("./store").LatLng,
-        southwest: import("./store").LatLng,
+        getNorthEast: () => import("./store").LatLng,
+        getSouthWest: () => import("./store").LatLng,
     }} LatLngBounds
     @typedef {{
-        location : {
-            lat : () => number,
-            lng : () => number,
-        },
+        lat : () => number,
+        lng : () => number,
+    }} GoogleLatLng
+    @typedef {{
+        location : GoogleLatLng,
+        viewport : LatLngBounds,
     }} AddressGeometry
     @typedef {{
         //a number from 0–6, corresponding to the days of the week, starting on Sunday. For example, 2 means Tuesday.
@@ -70,19 +72,83 @@ const url = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(co
         query : "restaurant",
     }} NearbySearchRequest
 
+    @callback GetDetailsCallback
+    @param {NearbySearchItem} result
+    @param {string|"OK"} status
+
+    @typedef {{
+        placeId : string,
+        fields? : string[],
+    }} GetDetailsRequest
+
     @typedef {{
         nearbySearch : (
             req : NearbySearchRequest,
             callback : NearbySearchCallback,
+        ) => void,
+        getDetails : (
+            req : GetDetailsRequest,
+            callback : GetDetailsCallback,
         ) => void
     }} PlacesServiceInstance
+
+    @callback RouteCallback
+    @param {RouteResult} result
+    @param {string|"OK"} status
+
+    @typedef {{
+        origin : {
+            lat : number,
+            lng : number,
+        },
+        destination : {
+            lat : number,
+            lng : number,
+        },
+        travelMode : "WALKING"|"BICYCLING"|"DRIVING"|"TRANSIT"
+    }} RouteRequest
+
+    @typedef {{
+        geocoded_waypoints : {}[],
+        request : RouteRequest,
+        routes : {
+            bounds : LatLngBounds,
+            overview_path : GoogleLatLng[],
+            legs : {
+                distance : { text : string, value : number, },
+                duration : { text : string, value : number, },
+                end_address : string,
+                start_address : string,
+                end_location : GoogleLatLng,
+                start_location : GoogleLatLng,
+                steps : {
+                    distance : { text : string, value : number, },
+                    duration : { text : string, value : number, },
+                    end_location : GoogleLatLng,
+                    start_location : GoogleLatLng,
+                    instructions : string,
+                }[]
+            }[]
+        }[],
+    }} RouteResult
+
+    @typedef {{
+        route : (
+            req : RouteRequest,
+            callback : RouteCallback,
+        ) => void
+    }} DirectionsServiceInstance
 
     @typedef {{
         maps : {
             places : {
                 PlacesService : { new (map : any) : PlacesServiceInstance }
             },
-            Size : { new (w : number, h : number) : SizeInstance }
+            DirectionsService : { new () : DirectionsServiceInstance },
+            Size : { new (w : number, h : number) : SizeInstance },
+            TravelMode : {
+
+            }
         }
     }} GoogleApi
     @typedef {(google : GoogleApi) => void} OnLoadCallback
@@ -163,6 +229,96 @@ export function nearbySearch (map, req, callback) {
                 console.log("nearbySearch.status", status);
                 console.log("nearbySearch.pagination", pagination);
                 callback(result, status, pagination);
+            }
+        );
+    });
+
+    return {
+        cancel : () => {
+            canceled = true;
+        },
+    };
+}
+
+/**
+    @param {any} map
+    @param {GetDetailsRequest} req
+    @param {GetDetailsCallback} callback
+    @returns {{
+        cancel : () => void
+    }}
+*/
+export function getDetails (map, req, callback) {
+    let canceled = false;
+
+    getOrLoad((googleApi) => {
+        if (canceled) {
+            return;
+        }
+
+        const service = new googleApi.maps.places.PlacesService(map);
+        console.log("service", service);
+        service.getDetails(
+            {
+                ...req,
+                fields : [
+                    "icon",
+                    "geometry",
+                    "name",
+                    "opening_hours",
+                    "photo",
+                    "place_id",
+                    "price_level",
+                    "rating",
+                    "vicinity",
+                    "permanently_closed"
+                ]
+            },
+            (result, status) => {
+                if (canceled) {
+                    return;
+                }
+                console.log("getDetails.result", result);
+                console.log("getDetails.status", status);
+                callback(result, status);
+            }
+        );
+    });
+
+    return {
+        cancel : () => {
+            canceled = true;
+        },
+    };
+}
+
+
+/**
+    @param {RouteRequest} req
+    @param {RouteCallback} callback
+    @returns {{
+        cancel : () => void
+    }}
+*/
+export function route (req, callback) {
+    let canceled = false;
+
+    getOrLoad((googleApi) => {
+        if (canceled) {
+            return;
+        }
+
+        const service = new googleApi.maps.DirectionsService();
+        console.log("service", service);
+        service.route(
+            req,
+            (result, status) => {
+                if (canceled) {
+                    return;
+                }
+                console.log("route.result", result);
+                console.log("route.status", status);
+                callback(result, status);
             }
         );
     });

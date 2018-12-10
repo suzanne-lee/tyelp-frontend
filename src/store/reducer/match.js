@@ -15,6 +15,7 @@ export const matchReducer = (state = initialState, action) => {
                     ...state.me,
                     matches : [...state.me.matches, action.match],
                 },
+                currentMatch : action.match,
             };
         }
         case "MATCH_FAIL": {
@@ -23,6 +24,14 @@ export const matchReducer = (state = initialState, action) => {
                 errorMessages : {
                     ...state.errorMessages,
                     match : action.errorMessage,
+                },
+            };
+        }
+        case "MATCH_SELECTED": {
+            return {
+                ...state,
+                currentMatch : {
+                    placeId : action.placeId
                 },
             };
         }

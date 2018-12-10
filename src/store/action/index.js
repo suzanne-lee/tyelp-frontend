@@ -13,6 +13,7 @@
 
     @typedef {import("./match").MatchSuccessAction} MatchSuccessAction
     @typedef {import("./match").MatchFailAction} MatchFailAction
+    @typedef {import("./match").MatchSelectedAction} MatchSelectedAction
 
     @typedef {import("./me").MeSuccessAction} MeSuccessAction
     @typedef {import("./me").MeFailAction} MeFailAction
@@ -28,6 +29,7 @@
         LogOutSuccessAction|
         MatchSuccessAction|
         MatchFailAction|
+        MatchSelectedAction|
         MeSuccessAction|
         MeFailAction|
         RegisterSuccessAction|

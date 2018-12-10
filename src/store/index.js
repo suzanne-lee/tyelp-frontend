@@ -5,10 +5,11 @@ import {reducer} from "./reducer";
 const enhancers = /** @type {any} */(window).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 /**
-    @typedef {import("redux").Dispatch<import("./action").Action>} Dispatch
+    @typedef {import("redux").Dispatch<import("./action").Action>} ReduxDispatch
+    @typedef {(callback : ThunkCallback) => void} ThunkDispatch
 
     @callback ThunkCallback
-    @param {Dispatch} dispatch
+    @param {ReduxDispatch} dispatch
 
     @type {
         import("redux").Store<
@@ -16,7 +17,7 @@ const enhancers = /** @type {any} */(window).__REDUX_DEVTOOLS_EXTENSION_COMPOSE_
             import("./action").Action
         > &
         {
-            dispatch : (callback : ThunkCallback) => void
+            dispatch : ThunkDispatch
         }
     }
 */

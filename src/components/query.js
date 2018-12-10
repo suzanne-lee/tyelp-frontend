@@ -7,273 +7,322 @@ import Restaurant from './restaurant';
 import '../styles/query.css';
 
 /**
-    @typedef {{ latLng : undefined|import("../store").LatLng }} QueryProps
+    @typedef {{
+        latLng : undefined|import("../store").LatLng,
+        me : undefined|import("../store").Me,
+        currentMatch : undefined|{ placeId : string },
+    }} QueryStateProps
+    @typedef {{
+        match : (args : import("../store/action").MatchArgs) => void
+        matchSelected : (args : { placeId : string }) => void
+    }} QueryDispatchProps
+    @typedef {QueryStateProps & QueryDispatchProps} QueryProps
     @typedef {{}} QueryState
 
     @extends {Component<QueryProps, QueryState>}
 */
 class Query extends Component {
+    /** @param {any} props */
+    constructor(props) {
+        super(props);
 
-	/** @param {any} props */
-	constructor(props) {
-		super(props);
+        this.state = {
+            restaurants: [],
+            favorites: [],
+            restaurant: null,
+            distance: 0,
+            index: 0,
+            destination: {
+                travelMode: "walk",
+                destination: -1
+            },
+            travel: {
+                distance: "",
+                time: ""
+            },
+            queryMode: 'lookup'
+        }
+    }
 
-		this.state = {
-			restaurants: [],
-			favorites: [],
-			restaurant: null,
-			distance: 0,
-			index: 0,
-			destination: {
-				travelMode: "walk",
-				destination: -1
-			},
-			travel: {
-				distance: "",
-				time: ""
-			},
-			queryMode: 'lookup'
-		}
-	}
+    componentWillMount() {
+        // Retrieve Geolocation
 
-	componentWillMount() {
-		// Retrieve Geolocation
+        /*
+        const options = {
+            enableHighAccuracy: false,
+            timeout: 6000000
+        }; */
 
-		/*
-		const options = {
-			enableHighAccuracy: false,
-			timeout: 6000000
-		}; */
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(this.positionReceived, this.positionNotReceived);
+            //navigator.geolocation.watchPosition(this.positionReceived, this.positionNotReceived, options);
+        }
+    }
 
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(this.positionReceived, this.positionNotReceived);
-			//navigator.geolocation.watchPosition(this.positionReceived, this.positionNotReceived, options);
-		}
-	}
+    // Geolocation function on success
+    /** @param {any} position */
+    positionReceived = (position) => {
+        //store.dispatch(actions.SET_COORDINATES_ACTION(position.coords.latitude, position.coords.longitude));
+    }
 
-	// Geolocation function on success
-	/** @param {any} position */
-	positionReceived = (position) => {
-		//store.dispatch(actions.SET_COORDINATES_ACTION(position.coords.latitude, position.coords.longitude));
-	}
+    // Geolocation function on failure
+    /** @param {any} error */
+    positionNotReceived = (error) => {
+        // TODO: warning modal
+        console.log(error);
+    }
 
-	// Geolocation function on failure
-	/** @param {any} error */
-	positionNotReceived = (error) => {
-		// TODO: warning modal
-		console.log(error);
-	}
+    // Function to shift left
+    prev = () => {
+        const cur = this.state.index;
+        const len = this.state.restaurants.length;
+        const updated = cur - 1 < 0? (cur - 1 + len) % len : cur - 1;
 
-	// Function to shift left
-	prev = () => {
-		const cur = this.state.index;
-		const len = this.state.restaurants.length;
-		const updated = cur - 1 < 0? (cur - 1 + len) % len : cur - 1;
+        this.setState(
+            {
+                ...this.state,
+                index: updated,
+                restaurant: this.state.restaurants[updated]
+            }
+        );
+    }
 
-		this.setState(
-			{
-				...this.state,
-				index: updated,
-				restaurant: this.state.restaurants[updated]
-			}
-		);
-	}
+    // Function to shift right
+    next = () => {
+        const cur = this.state.index;
+        const len = this.state.restaurants.length;
+        const updated = (cur + 1) % len;
 
-	// Function to shift right
-	next = () => {
-		const cur = this.state.index;
-		const len = this.state.restaurants.length;
-		const updated = (cur + 1) % len;
+        this.setState(
+            {
+                ...this.state,
+                index: updated,
+                restaurant: this.state.restaurants[updated]
+            }
+        );
+    }
 
-		this.setState(
-			{
-				...this.state,
-				index: updated,
-				restaurant: this.state.restaurants[updated]
-			}
-		);
-	}
+    select = () => {
+        /*if (this.state.restaurants.length > 0) {
 
-	select = () => {
-		/*if (this.state.restaurants.length > 0) {
-
-			const selection = this.state.restaurants[this.state.index];
-			store.dispatch(actions.SET_FAVORITES_ACTION({
-				queryMode: 'select',
-				selection: selection
-			}));
+            const selection = this.state.restaurants[this.state.index];
+            store.dispatch(actions.SET_FAVORITES_ACTION({
+                queryMode: 'select',
+                selection: selection
+            }));
       store.dispatch(actions.SET_HISTORY_ACTION(
         store.getState().app.me.userID,
         selection.name,
-				selection.rating,
-				selection.price_level,
-				selection.vicinity
+                selection.rating,
+                selection.price_level,
+                selection.vicinity
       ));
 
-			this.setState({
-				...this.state,
-				destination: {
-					...this.state.destination,
-					destination: this.state.restaurants[this.state.index].vicinity
-				},
-				queryMode: 'select'
-			});
-		}*/
-	}
+            this.setState({
+                ...this.state,
+                destination: {
+                    ...this.state.destination,
+                    destination: this.state.restaurants[this.state.index].vicinity
+                },
+                queryMode: 'select'
+            });
+        }*/
+    }
 
-	// Function to submit distance
-	/** @param {any} event */
-	submit = (event) => {
-		/*event.preventDefault();
-		const dist = this.state.distance;
+    // Function to submit distance
+    /** @param {any} event */
+    submit = (event) => {
+        /*event.preventDefault();
+        const dist = this.state.distance;
 
-		if (isNaN(dist) || !dist || dist.length <= 0) {
-			// TODO: warning modal
-			console.log('Error: input is not a number');
-		}
-		else {
-			store.dispatch(actions.SET_DISTANCE_ACTION(
-				{
-					queryMode: 'lookup',
-					distance: parseInt(dist)
-				}
-			));
+        if (isNaN(dist) || !dist || dist.length <= 0) {
+            // TODO: warning modal
+            console.log('Error: input is not a number');
+        }
+        else {
+            store.dispatch(actions.SET_DISTANCE_ACTION(
+                {
+                    queryMode: 'lookup',
+                    distance: parseInt(dist)
+                }
+            ));
 
-			this.setState({
-				...this.state,
-				queryMode: 'lookup'
-			});
-		}*/
-	}
+            this.setState({
+                ...this.state,
+                queryMode: 'lookup'
+            });
+        }*/
+    }
 
-	/** @param {any} event */
-	handleInput = (event) => {
-		event.preventDefault();
-		this.setState(
-			{
-				...this.state,
-				distance: (event.target.value) / 1000
-			}
-		);
-	}
+    /** @param {any} event */
+    handleInput = (event) => {
+        event.preventDefault();
+        this.setState(
+            {
+                ...this.state,
+                distance: (event.target.value) / 1000
+            }
+        );
+    }
 
-	/** @param {any} event */
-	travelMode = (event) => {
-		event.preventDefault();
-		this.setState({
-			...this.state,
-			destination: {
-				...this.state.destination,
-				travelMode: event.target.value
-			},
-		})
-	}
+    /** @param {any} event */
+    travelMode = (event) => {
+        event.preventDefault();
+        this.setState({
+            ...this.state,
+            destination: {
+                ...this.state.destination,
+                travelMode: event.target.value
+            },
+        })
+    }
 
-	/** @param {any} details */
-	getMapDetails = (details) => {
-		if (details) {
+    /** @param {any} details */
+    getMapDetails = (details) => {
+        if (details) {
 
-			if (this.state.queryMode === 'lookup') {
+            if (this.state.queryMode === 'lookup') {
 
-				const list  = this.shuffle(details.restaurants);
-				const direction = details.direction;
+                const list  = this.shuffle(details.restaurants);
+                const direction = details.direction;
 
-				this.setState(
-					{
-						...this.state,
-						index: 0,
-						restaurants: list.length > 0? list : [],
-						restaurant: list.length > 0? list[0] : null,
-						travel: {
-							distance: direction.routes && direction.routes.length > 0 && direction.routes[0].legs.length > 0? direction.routes[0].legs[0].distance.text : "",
-							time: direction.routes && direction.routes.length > 0 && direction.routes[0].legs.length > 0? direction.routes[0].legs[0].duration.text : ""
-						}
-					}
-				);
-			}
-			else {
-				const direction = details.direction;
+                this.setState(
+                    {
+                        ...this.state,
+                        index: 0,
+                        restaurants: list.length > 0? list : [],
+                        restaurant: list.length > 0? list[0] : null,
+                        travel: {
+                            distance: direction.routes && direction.routes.length > 0 && direction.routes[0].legs.length > 0? direction.routes[0].legs[0].distance.text : "",
+                            time: direction.routes && direction.routes.length > 0 && direction.routes[0].legs.length > 0? direction.routes[0].legs[0].duration.text : ""
+                        }
+                    }
+                );
+            }
+            else {
+                const direction = details.direction;
 
-				this.setState(
-					{
-						...this.state,
-						travel: {
-							distance: direction.routes && direction.routes.length > 0 && direction.routes[0].legs.length > 0? direction.routes[0].legs[0].distance.text : "",
-							time: direction.routes && direction.routes.length > 0 && direction.routes[0].legs.length > 0? direction.routes[0].legs[0].duration.text : ""
-						}
-					}
-				);
-			}
-		}
-	}
+                this.setState(
+                    {
+                        ...this.state,
+                        travel: {
+                            distance: direction.routes && direction.routes.length > 0 && direction.routes[0].legs.length > 0? direction.routes[0].legs[0].distance.text : "",
+                            time: direction.routes && direction.routes.length > 0 && direction.routes[0].legs.length > 0? direction.routes[0].legs[0].duration.text : ""
+                        }
+                    }
+                );
+            }
+        }
+    }
 
-	/** @param {any} originalArray */
-	shuffle = (originalArray) => {
-		var array = originalArray.slice();
-		var currentIndex = array.length, temporaryValue, randomIndex;
+    /** @param {any} originalArray */
+    shuffle = (originalArray) => {
+        var array = originalArray.slice();
+        var currentIndex = array.length, temporaryValue, randomIndex;
 
-		while (0 !== currentIndex) {
-			randomIndex = Math.floor(Math.random() * currentIndex);
-			currentIndex -= 1;
-			temporaryValue = array[currentIndex];
-			array[currentIndex] = array[randomIndex];
-			array[randomIndex] = temporaryValue;
-		}
+        while (0 !== currentIndex) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
 
-		return array;
-	}
+        return array;
+    }
 
-	render() {
-		return (
-			<div className="container-fluid">
-				<div className="row">
-					<div className="query-container">
+    render() {
+        return (
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="query-container">
 
-						{/*<form className="form" onSubmit={ this.submit }>
-							<label> Distance (m) </label>
-							<input type="text" onChange={ (event) => this.handleInput(event) } />
-							<button type="button" className="btn btn-success">LOOK UP</button>
-							<div className="travel-mode">
-								<select onChange={ (event) => this.travelMode(event) }>
-									<option value="walk">Walk</option>
-  									<option value="transit">Transit</option>
-									  <option value="driving">Driving</option>
-								</select>
-							</div>
-							<div className="travel-info">
-								<label> Travel Distance: { this.state.travel.distance } </label>
-								<label> Travel Distance: { this.state.travel.time } </label>
-							</div>
-						</form>
+                        {/*<form className="form" onSubmit={ this.submit }>
+                            <label> Distance (m) </label>
+                            <input type="text" onChange={ (event) => this.handleInput(event) } />
+                            <button type="button" className="btn btn-success">LOOK UP</button>
+                            <div className="travel-mode">
+                                <select onChange={ (event) => this.travelMode(event) }>
+                                    <option value="walk">Walk</option>
+                                      <option value="transit">Transit</option>
+                                      <option value="driving">Driving</option>
+                                </select>
+                            </div>
+                            <div className="travel-info">
+                                <label> Travel Distance: { this.state.travel.distance } </label>
+                                <label> Travel Distance: { this.state.travel.time } </label>
+                            </div>
+                        </form>
 
-						<Restaurant restaurant = { this.state.restaurant } />
-						<div className="row">
-							<div className="col-1">
-								<button type="button" className="btn btn-outline-primary" onClick={ this.prev }> PREV </button>
-							</div>
-							<div className="col-1">
-								<button type="button" className="btn btn-primary" onClick={ this.select }> SELECT </button>
-							</div>
-							<div className="col-1">
-								<button type="button" className="btn btn-outline-primary" onClick={ this.next }> NEXT </button>
-							</div>
-						</div>*/}
-						<Map getMapDetails={ this.getMapDetails } center={this.props.latLng}/>
-					</div>
-				</div>
-			</div>
-		);
-	}
+                        <Restaurant restaurant = { this.state.restaurant } />
+                        <div className="row">
+                            <div className="col-1">
+                                <button type="button" className="btn btn-outline-primary" onClick={ this.prev }> PREV </button>
+                            </div>
+                            <div className="col-1">
+                                <button type="button" className="btn btn-primary" onClick={ this.select }> SELECT </button>
+                            </div>
+                            <div className="col-1">
+                                <button type="button" className="btn btn-outline-primary" onClick={ this.next }> NEXT </button>
+                            </div>
+                        </div>*/}
+                        <Map
+                            getMapDetails={this.getMapDetails}
+                            center={this.props.latLng}
+                            onMatch={({placeId}) => {
+                                if (this.props.me == undefined) {
+                                    return;
+                                }
+                                console.log("Match", placeId);
+                                this.props.match({
+                                    placeId,
+                                    authenticationToken : this.props.me.authenticationToken
+                                });
+                            }}
+                            onMatchSelected={({placeId}) => {
+                                this.props.matchSelected({
+                                    placeId
+                                });
+                            }}
+                            currentMatch={this.props.currentMatch}
+                            matches={
+                                this.props.me == undefined ?
+                                [] :
+                                this.props.me.matches
+                            }
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }
 
 
 /**
     @param {import("../store").State} state
-    @returns {QueryProps}
+    @returns {QueryStateProps}
 */
 function mapStateToProps (state) {
     return {
         latLng: state.latLng,
+        me : state.me,
+        currentMatch : state.currentMatch,
     };
 };
-export default connect(mapStateToProps)(Query);
+
+/**
+    @param {import("../store").ThunkDispatch} dispatch
+    @returns {QueryDispatchProps}
+*/
+function mapDispatchToProps (dispatch) {
+    return {
+        match : (args) => {
+            dispatch(actions.MATCH_ACTION(args));
+        },
+        matchSelected : (args) => {
+            dispatch(actions.MATCH_SELECTED_ACTION(args));
+        }
+    };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Query);

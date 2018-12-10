@@ -8,6 +8,12 @@ import api from "./api";
     @typedef MatchFailAction
     @property {"MATCH_FAIL"} type
     @property {string} errorMessage
+
+    @typedef {{ placeId : string }} MatchSelectedArgs
+
+    @typedef MatchSelectedAction
+    @property {"MATCH_SELECTED"} type
+    @property {string} placeId
 */
 
 /**
@@ -23,6 +29,19 @@ export const MATCH_ACTION = (args) => {
             .catch(function (err) {
                 dispatch(MATCH_ACTION_FAIL(err.message));
             });
+    };
+}
+
+/**
+    @param {MatchSelectedArgs} args
+    @returns {import("..").ThunkCallback}
+*/
+export const MATCH_SELECTED_ACTION = (args) => {
+    return (dispatch) => {
+        dispatch({
+            type : "MATCH_SELECTED",
+            placeId : args.placeId,
+        });
     };
 }
 
