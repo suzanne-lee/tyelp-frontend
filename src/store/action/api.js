@@ -45,7 +45,7 @@ const api = {
         @returns {import("axios").AxiosPromise<Me>}
     */
     logIn : (args) => {
-        return axiosInstance.post("/login", args);
+        return axiosInstance.post("/log-in", args);
     },
     /**
         @param {MeArgs} args
@@ -53,7 +53,7 @@ const api = {
     */
     me : (args) => {
         return axiosInstance.post(
-            "/login",
+            "/me",
             {},
             {
                 headers : {
@@ -69,7 +69,7 @@ const api = {
     match : (args) => {
         return axiosInstance.post(
             `/me/place/${encodeURIComponent(args.placeId)}/match`,
-            {},
+            args.match,
             {
                 headers : {
                     authorization : args.authenticationToken

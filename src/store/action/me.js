@@ -21,7 +21,15 @@ export const ME_ACTION = (args) => {
                 dispatch(ME_ACTION_SUCCESS(response.data));
             })
             .catch(function (err) {
-                dispatch(ME_ACTION_FAIL(err.message));
+                dispatch(ME_ACTION_FAIL(
+                    (
+                        err.response !== undefined &&
+                        err.response.data !== undefined &&
+                        err.response.data.errorMessage !== undefined
+                    ) ?
+                    err.response.data.errorMessage :
+                    err.message
+                ));
             });
     };
 }

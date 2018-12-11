@@ -27,7 +27,15 @@ export const MATCH_ACTION = (args) => {
                 dispatch(MATCH_ACTION_SUCCESS(response.data));
             })
             .catch(function (err) {
-                dispatch(MATCH_ACTION_FAIL(err.message));
+                dispatch(MATCH_ACTION_FAIL(
+                    (
+                        err.response !== undefined &&
+                        err.response.data !== undefined &&
+                        err.response.data.errorMessage !== undefined
+                    ) ?
+                    err.response.data.errorMessage :
+                    err.message
+                ));
             });
     };
 }
