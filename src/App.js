@@ -94,7 +94,7 @@ class App extends Component {
                                 {
                                     this.props.me === undefined ?
                                     null :
-                                    <div style={{ fontSize : "50%" }}>
+                                    <div style={{ fontSize : "60%" }}>
                                         Hello, {this.props.me.displayName}!
                                     </div>
                                 }

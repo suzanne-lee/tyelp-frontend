@@ -24,22 +24,7 @@ class Nearby extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            restaurants: [],
-            favorites: [],
-            restaurant: null,
-            distance: 0,
-            index: 0,
-            destination: {
-                travelMode: "walk",
-                destination: -1
-            },
-            travel: {
-                distance: "",
-                time: ""
-            },
-            queryMode: 'lookup'
-        }
+        this.state = {};
     }
 
 
